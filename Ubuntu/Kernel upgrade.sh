@@ -1,7 +1,7 @@
 #Download kernel
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-headers-version-version-date_all.deb
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-headers-version-generic_version-date_amd64.deb
-http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-image-version-generic_version-date_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-image-version-generic_version-date_amd64.deb
 
 #Install
 sudo dpkg -i *.deb
