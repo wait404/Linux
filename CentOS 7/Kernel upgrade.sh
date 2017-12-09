@@ -1,5 +1,5 @@
 #Import the public key:
-pm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
 
 #To install ELRepo for RHEL-7, SL-7 or CentOS-7:
 rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
