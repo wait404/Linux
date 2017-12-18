@@ -6,7 +6,7 @@ wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-image-version-g
 #Install
 sudo dpkg -i *.deb
 
-#reboot
+#Reboot
 reboot
 
 #Remove old kernel
