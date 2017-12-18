@@ -16,7 +16,7 @@ awk -F\' '$1=="menuentry " {print $2}' /etc/grub2.cfg
 #Set the default start
 grub2-set-default 0
 
-#reboot
+#Reboot
 reboot
 
 #Remove old kernel
