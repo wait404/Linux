@@ -6,7 +6,7 @@ cd /usr/local/src/ && wget https://cdn.kernel.org/pub/linux/kernel/version/linux
 make config
 #配置所有可编译的内核特性
 make allyesconfig
-#能选的都选择为NO、只有必须的都选择为yes
+#能选的都选择为no、只有必须的都选择为yes
 make allnoconfig
 #菜单选择
 make menuconfig
@@ -15,7 +15,7 @@ make kconfig
 #Gnome桌面环境，并且安装gtk开发环境
 make gconfig
 #在旧内核基础上修改
-cp /boot/config-version-computing platform /usr/local/src/linux
+cp /boot/config-version-computing platform /usr/local/src/linux/.config
 make oldconfig
 
 #编译内核
