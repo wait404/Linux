@@ -1,5 +1,5 @@
 #下载最新内核并解压
-cd /usr/local/src/ && wget https://cdn.kernel.org/pub/linux/kernel/version/linux-version.tar.xz && tar -Jfxv linux-version.tar.xz && cd ./linux
+cd /usr/local/src/ && wget https://cdn.kernel.org/pub/linux/kernel/version/linux-version.tar.xz && tar -Jxvf linux-version.tar.xz && cd ./linux
 
 #配置内核
 #遍历选择所要编译的内核特性
