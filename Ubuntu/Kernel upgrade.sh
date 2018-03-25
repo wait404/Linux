@@ -10,7 +10,7 @@ sudo dpkg -i *.deb
 reboot
 
 #Remove old kernel
-dpkg --get-selections| grep linux
+dpkg --get-selections | grep linux
 sudo apt-get remove linux-image-version
 
 #Remove deinstall
