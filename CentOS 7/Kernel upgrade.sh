@@ -11,11 +11,12 @@ then
     #To install ELRepo for RHEL-7, SL-7 or CentOS-7
     rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
 fi
-    #To install kernel
-    yum --enablerepo=elrepo-kernel install kernel-ml-devel kernel-ml -y
-    #Set the default start
-    grub2-set-default 0
-    read -t 10 -p "Would you want to reboot the system(Y/N):" choicechar
+#To install kernel
+yum --enablerepo=elrepo-kernel install kernel-ml-devel kernel-ml -y
+#Set the default start
+grub2-set-default 0
+#Reboot the system
+read -t 10 -p "Would you want to reboot the system(Y/N):" choicechar
 case $choicechar in
     Y|y)
         init 6
