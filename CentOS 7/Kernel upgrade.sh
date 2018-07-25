@@ -4,7 +4,13 @@ red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
 [[ $EUID -ne 0 ]] && echo -e "[${red}Error${plain}] Please run as root." && exit 1
-if [ ! -f "/etc/yum.repos.d/elrepo.repo" ]
+#Install yum-utils
+if [ `rpm -qa | grep yum-utils | wc -l` -eq 0 ]
+then
+    yum install yum-utils -y
+fi
+#Install elrepo
+if [ `rpm -qa | grep elrepo-release | wc -l` -eq 0 ]
 then
     #Import the public key
     rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
