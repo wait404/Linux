@@ -3,7 +3,7 @@ set -e
 red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
-[[ $EUID -ne 0 ]] && echo -e "[${red}Error${plain}] Please run as root." && exit 1
+[[ `id -u` -ne 0 ]] && echo -e "${red}Please run as root.${plain}" && exit 1
 #Install yum-utils
 if [ `rpm -qa | grep yum-utils | wc -l` -eq 0 ]
 then
