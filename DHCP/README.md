@@ -21,7 +21,7 @@ fixed-address IP地址|分配给客户端一个固定的IP地址
 :---:|:---:
 subnet-mask 子网掩码|为客户端指定子网掩码
 domian-name “域名”|为客户端指定DNS域名
-domain-name-srvers IP地址|为客户端指定DNS服务器的IP地址
+domain-name-servers IP地址|为客户端指定DNS服务器的IP地址
 host-name “主机名”|为客户端指定主机名
 routers IP地址|为客户端指定默认网关
 broadcast-address 广播地址|为客户端指定广播地址
