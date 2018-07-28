@@ -5,4 +5,4 @@ RAID档次|最少硬盘|最大容错|可用容量|读取性能|写入性能|安�
 5|3|1|n-1|n-1|n-1|高|追求最大容量、最小预算|个人、企业备份
 6|4|2|n-2|n-2|n-2|安全性较RAID 5高|同RAID 5，但较安全|个人、企业备份
 10|4|n/2|n/2|n/2|n/2|安全性高，但在同一个子组群中不能出现两颗毁损硬盘|综合RAID 0/1优点，理论速度较快|大型数据库、服务器
-<p align="right">via [RAID-Wikipeida](https://zh.wikipedia.org/wiki/RAID)</p>
+<p align="right">via <a href="https://zh.wikipedia.org/wiki/RAID">Wikipedia</a></p>
