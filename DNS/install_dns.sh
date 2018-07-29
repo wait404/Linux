@@ -40,6 +40,7 @@ Edit_conf()
     sed -i 's/localhost;/any;/g' /var/named/chroot/etc/named.conf
     sed -i 's/named.rfc1912.zones/named.zones/g' /var/named/chroot/etc/named.conf
 }
+#Set the firewalld config
 Set_firewalld()
 {
     firewall_state=`firewall-cmd --state`
@@ -197,7 +198,7 @@ Master_dns()
                 break
                 ;;
             *)
-                echo "${red}Your choise is erroar!${plain}"
+                echo "${red}Your choise is error!${plain}"
                 ;;
         esac
     done
