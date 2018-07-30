@@ -72,6 +72,11 @@ Disable_selinux()
     then
         sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
         setenforce 0
+        echo -e "${green}Disable the selinux success!${plain}"
+    elif [[${enforce_info} == "Permissive" || ${enforce_info} == "Disabled" ]]
+        echo -e "${green}The selinux has been disabled!${plain}"
+    else
+        echo -e "${yellow}Please check the selinux!${plain}"
     fi
 }
 #check ip
