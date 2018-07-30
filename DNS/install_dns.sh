@@ -22,10 +22,7 @@ Install_bind()
     yum install bind bind-chroot -y > /dev/null
     \cp -pr /etc/named* /var/named/chroot/etc/
     \cp -pr /usr/share/doc/bind*/sample/var/named/* /var/named/chroot/var/named/
-    if [ ! -d "/var/named/chroot/var/named/dynamic" ]
-    then
-        mkdir /var/named/chroot/var/named/dynamic
-    fi
+    mkdir /var/named/chroot/var/named/dynamic
     touch /var/named/chroot/var/named/data/cache_dump.db
     touch /var/named/chroot/var/named/data/named_stats.txt
     touch /var/named/chroot/var/named/data/named_mem_stats.txt
@@ -73,7 +70,8 @@ Disable_selinux()
         sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
         setenforce 0
         echo -e "${green}Disable the selinux success!${plain}"
-    elif [[${enforce_info} == "Permissive" || ${enforce_info} == "Disabled" ]]
+    elif [[ ${enforce_info} == "Permissive" || ${enforce_info} == "Disabled" ]]
+    then
         echo -e "${green}The selinux has been disabled!${plain}"
     else
         echo -e "${yellow}Please check the selinux!${plain}"
