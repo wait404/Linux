@@ -18,6 +18,7 @@ echo
 #Install bind and bind-chroot
 Install_bind()
 {
+    echo "The service is install now,please wait..."
     yum install bind bind-chroot -y > /dev/null
     \cp -pr /etc/named* /var/named/chroot/etc/
     \cp -pr /usr/share/doc/bind*/sample/var/named/* /var/named/chroot/var/named/
@@ -44,6 +45,7 @@ Edit_conf()
 #Set the firewalld config
 Set_firewalld()
 {
+    echo "Check the firewalld..."
     firewall_state=`firewall-cmd --state`
     check_dns=`firewall-cmd --list-services | grep -i dns | wc -l`
     check_53udp=`firewall-cmd --list-ports | grep -i 53/udp | wc -l`
@@ -64,6 +66,7 @@ Set_firewalld()
 #Disable selinux
 Disable_selinux()
 {
+    echo "Check the selinux..."
     enforce_info=`getenforce`
     if [[ ${enforce_info} == "Enforcing" ]]
     then
@@ -246,7 +249,7 @@ Start_service()
         echo -e "${red}The service start failed,please check it.${plain}"
     fi
 }
-read -p "Which dns service would you want to instll(master/slave):" dns_type
+read -p "Which dns service would you want to install(master/slave):" dns_type
 case ${dns_type} in
     master)
         Install_bind
