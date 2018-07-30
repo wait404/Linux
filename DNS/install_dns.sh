@@ -12,6 +12,7 @@ clear
 echo
 echo "#############################################################"
 echo "#                             DNS                           #"
+echo "#  ATTENTION:must add the NS resolve if choose the master.  #"
 echo "#############################################################"
 echo
 #Install bind and bind-chroot
@@ -237,6 +238,13 @@ Start_service()
     systemctl start named-chroot
     systemctl enable named-chroot
     echo -e "${green}Install complated.${plain}"
+    if [ `systemctl status named-chroot.service|grep -o "Active: active" | wc -l` -ne 0 ]
+    then
+        echo -e "${green}The service start successfully.${plain}"
+    elif [ `systemctl status named-chroot.service | grep -o "Active: failed"` -ne 0 ]
+    then
+        echo -e "${red}The service start failed,please check it.${plain}"
+    fi
 }
 read -p "Which dns service would you want to instll(master/slave):" dns_type
 case ${dns_type} in
