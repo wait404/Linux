@@ -15,11 +15,13 @@ echo "#                             DNS                           #"
 echo "#  ATTENTION:must add the NS resolve if choose the master.  #"
 echo "#############################################################"
 echo
+#Check permission
+[[ `id -u` -ne 0 ]] && echo -e "${red}Please run as root.${plain}" && exit 1
 #Install bind and bind-chroot
 Install_bind()
 {
     echo "The service is install now,please wait..."
-    yum install bind bind-chroot -y > /dev/null
+    yum install bind bind-chroot -y &>/dev/null
     \cp -pr /etc/named* /var/named/chroot/etc/
     \cp -pr /usr/share/doc/bind*/sample/var/named/* /var/named/chroot/var/named/
     mkdir /var/named/chroot/var/named/dynamic
@@ -44,16 +46,16 @@ Set_firewalld()
 {
     echo "Check the firewalld..."
     firewall_state=`firewall-cmd --state`
-    check_dns=`firewall-cmd --list-services | grep -i dns | wc -l`
-    check_53udp=`firewall-cmd --list-ports | grep -i 53/udp | wc -l`
+    check_dns=`firewall-cmd --list-services | grep -o "dns" | wc -l`
+    check_53udp=`firewall-cmd --list-ports | grep -o "53/udp" | wc -l`
     if [[ ${firewall_state} == "running" ]]
     then
         if [[ ${check_dns} -ne 0 || ${check_53udp} -ne 0 ]]
         then
             echo -e "${green}The port has been opened!${plain}"
         else
-            firewall-cmd --zone=public --permanent --add-service=dns > /dev/null
-            firewall-cmd --reload > /dev/null
+            firewall-cmd --zone=public --permanent --add-service=dns &>/dev/null
+            firewall-cmd --reload &>/dev/null
             echo -e "${green}The port is successfully opened!${plain}"
         fi
     else
@@ -82,7 +84,7 @@ function check_ip()
 {
     local ip_addr=$1
     valid_check=`echo ${ip_addr}|awk -F. '$1<=255&&$2<=255&&$3<=255&&$4<=255{print "yes"}'`
-    if echo ${ip_addr} | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" >/dev/null
+    if echo ${ip_addr} | grep -Eq "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"
     then
         if [[ ${valid_check} == "yes" ]]
         then
@@ -96,10 +98,27 @@ function check_ip()
         return 1
     fi
 }
+#check domain name
+function check_domain_name()
+{
+    local domain_name=$1
+    if echo "${domain_name}" | grep -Eq "^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
+    then
+        return 0
+    else
+        echo -e "${yellow}The domain name is not available!${plain}"
+        return 1
+    fi
+}
 #Set the conf
 Master_dns()
 {
-    read -p "Please input the domain name:" domain_name
+    while true
+    do
+        read -p "Please input the domain name:" domain_name
+        check_domain_name $domain_name
+        [ $? -eq 0 ] && break
+    done
     while true
     do
         read -p "Please input the ip area(example 192.168.0.0.):" ip_addr
@@ -137,27 +156,20 @@ Master_dns()
     echo "                    1W  ; expire" >> /var/named/chroot/var/named/${ip_addr_head}.zone
     echo "                    3H )    ; minimum" >> /var/named/chroot/var/named/${ip_addr_head}.zone
     echo "" >> /var/named/chroot/var/named/${ip_addr_head}.zone
-    #Check resolve type
-    function check_resolve_type()
-    {
-        local resolve_type=$1
-        resolve_type_array=(a A cname CNAME mx MX ns NS)
-        if echo "${resolve_type_array[@]}" | grep -w "${resolve_type}" > /dev/null
-        then
-            return 0
-        else
-            echo -e "${red}Your resolve is error,please retry!${plain}"
-            return 1
-        fi
-    }
     #Add resolve
     while ((1))
     do
         while true
         do
+            resolve_type_array=(a A cname CNAME mx MX ns NS)
             read -p "Please input resolve type:" resolve_type
-            check_resolve_type $resolve_type
-            [ $? -eq 0 ] && break
+            if echo "${resolve_type_array[@]}" | grep -qw "${resolve_type}"
+            then
+                break
+            else
+                echo -e "${yellow}Your resolve is error,please retry!${plain}"
+                continue
+            fi
         done
         case ${resolve_type} in
             A|a)
@@ -215,7 +227,12 @@ Slave_dns()
 {
     mkdir /var/named/chroot/etc/slaves
     chown root:named /var/named/chroot/etc/slaves
-    read -p "please input the master domain name:" domain_name
+    while true
+    do
+        read -p "please input the master domain name:" domain_name
+        check_domain_name $domain_name
+        [ $? -eq 0 ] && break
+    done
     while true
     do
         read -p "Please input ip address:" ip_addr
@@ -240,9 +257,9 @@ Slave_dns()
 Start_service()
 {
     systemctl start named
-    systemctl enable named
+    systemctl enable named &>/dev/null
     systemctl start named-chroot
-    systemctl enable named-chroot
+    systemctl enable named-chroot &>/dev/null
     echo -e "${green}Install complated.${plain}"
     if [ `systemctl status named-chroot.service|grep -o "Active: active" | wc -l` -ne 0 ]
     then
