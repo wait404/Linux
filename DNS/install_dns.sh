@@ -286,7 +286,7 @@ do
     then
         break
     else
-        echo -e "${yellow}Your choise is wrong Please retry.${plain}"
+        echo -e "${yellow}Your choise is wrong,please retry.${plain}"
         continue
     fi
 done
