@@ -57,7 +57,7 @@ do
     fi
 done
 #Get memtotal number
-mem_num=`cat /proc/meminfo | grep "MemTotal" | awk -F : '{print $2}'|sed 's/^[ \t]*//g' | tr -cd "[0-9]"`
+mem_num=`cat /proc/meminfo | grep "MemTotal" | awk -F : '{print $2}' | tr -cd "[0-9]"`
 #Memory more than 0G and less than 4G
 if [[ ${mem_num} -ge 0 && ${mem_sum} -le 4194304 ]]
 then
