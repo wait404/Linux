@@ -269,9 +269,29 @@ Start_service()
         echo -e "${red}The service start failed,please check it.${plain}"
     fi
 }
-read -p "Which dns service would you want to install(master/slave):" dns_type
-case ${dns_type} in
-    master)
+choise_menu=(
+master
+slave
+)
+while true
+do
+    for ((i=1;i<=${#choise_menu[@]};i++))
+    do
+        tmp_menu="${choise_menu[$i-1]}"
+        echo "$i) ${tmp_menu}"
+    done
+    read -p "Which dns service would you want to install(Default is master):" choise_num
+    [ -z ${choise_num} ] && choise_num=1
+    if [[ ${choise_num} -ge 1 && ${choise_num} -le 2 ]]
+    then
+        break
+    else
+        echo -e "${yellow}Your choise is wrong Please retry.${plain}"
+        continue
+    fi
+done
+case ${choise_num} in
+    1)
         Install_bind
         Edit_conf
         Set_firewalld
@@ -280,7 +300,7 @@ case ${dns_type} in
         Start_service
         exit 0
         ;;
-    slave)
+    2)
         Install_bind
         Edit_conf
         Set_firewalld
@@ -288,9 +308,5 @@ case ${dns_type} in
         Slave_dns
         Start_service
         exit 0
-        ;;
-    *)
-        echo -e "${red}Input error!${plain}"
-        exit 1
         ;;
 esac
