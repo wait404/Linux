@@ -49,7 +49,7 @@ case ${choise_num} in
             if echo "${input_num}" | grep "^[0-1]*$" &>/dev/null
             then
                 echo -n "The result is:"
-                echo "ibase=8;ibase=2;${input_num}" | bc
+                echo "obase=8;ibase=2;${input_num}" | bc
                 break
             else
                 echo -e "${yellow}The input is wrong,please retry.${plain}"
@@ -65,21 +65,6 @@ case ${choise_num} in
             then
                 echo -n "The result is:"
                 echo "obase=10;ibase=2;${input_num}" | bc
-                break
-            else
-                echo -e "${yellow}The input is wrong,please retry.${plain}"
-                continue
-            fi
-        done
-        ;;
-    3)
-        while true
-        do
-            read -p "Please input the number:" input_num
-            if echo "${input_num}" | grep "^[0-1]*$" &>/dev/null
-            then
-                echo -n "The result is:"
-                echo "obase=16;ibase=2;${input_num}" | bc
                 break
             else
                 echo -e "${yellow}The input is wrong,please retry.${plain}"
