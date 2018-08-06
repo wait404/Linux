@@ -10,6 +10,6 @@ do
     else
         echo " success"
     fi
-    i=`$[$i+1]
+    i=$[$i+1]
     sleep 1s
 done > ping.log
