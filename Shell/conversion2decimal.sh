@@ -24,6 +24,7 @@ do
         break
     else
         echo -e "${yellow}The input is wrong,please retry.${plain}"
+        continue
     fi
 done
 case ${choise_num} in
