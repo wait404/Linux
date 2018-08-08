@@ -12,6 +12,57 @@ then
     echo -e "${red}The mdadm doesn't exist,please install.${plain}" 
     exit 1
 fi
+function check_path()
+{
+    i=0
+    disk_array=()
+    while true
+    do
+        read -e -p "Please choose the disk:" choise_disk
+        if echo $choise_disk | grep "^/" | [ -b $choise_disk ]
+        then
+            disk_array[$i]=$choise_disk
+            let i++
+            while true
+            do
+                read -p "Would you want to choose another disk(Y/N):" choise_char
+                [ -z $choise_char ] && choise_char=Y
+                case $choise_char in
+                    Y|y)
+                        continue 2
+                        ;;
+                    N|n)
+                        break 2
+                        ;;
+                    *)
+                        continue
+                        ;;
+                esac
+            done
+        else
+            echo -e "${yellow}The disk path is wrong or the disk doesn't exist.${plain}"
+        fi
+    done
+}
+function check_raidtype()
+{
+    if [ -b /dev/md0 ]
+    then
+        raid_type=0
+    elif [ -b /dev/md1 ]
+    then
+        raid_type=1
+    elif [ -b /dev/md5 ]
+    then
+        raid_type=5
+    elif [ -b /dev/md10 ]
+    then
+        raid_type=10
+    else
+        echo -e "${green}Look like there doesn't exist any raid.${plain}"
+        exit
+    fi
+}
 List_raid_type()
 {
     raid_type=(
@@ -40,38 +91,6 @@ List_raid_type()
 }
 Add_raid_disk()
 {
-    function add_disk()
-    {
-        i=0
-        disk_array=()
-        while true
-        do
-            read -e -p "Please choose the disk:" choise_disk
-            if echo $choise_disk | grep "^/" | [ -b $choise_disk ]
-            then
-                disk_array[$i]=$choise_disk
-                let i++
-                while true
-                do
-                    read -p "Would you want to add disk(Y/N):" choise_char
-                    [ -z $choise_char ] && choise_char=Y
-                    case $choise_char in
-                        Y|y)
-                            continue 2
-                            ;;
-                        N|n)
-                            break 2
-                            ;;
-                        *)
-                            continue
-                            ;;
-                    esac
-                done
-            else
-                echo -e "${yellow}The disk path is wrong or the disk doesn't exist.${plain}"
-            fi
-        done
-    }
     function raid0_operate()
     {
         if [ $raid_type -eq 0 ]
@@ -80,7 +99,7 @@ Add_raid_disk()
         fi
         while true
         do
-            add_disk
+            check_path
             if [[ ${#disk_array[@]} -lt $disk_limit ]]
             then
                 echo -e "${yellow}Raid $raid_type need at least $disk_limit disks.${plain}"
@@ -135,7 +154,7 @@ Add_raid_disk()
         fi
         while true
         do
-            add_disk
+            check_path
             if [ ${#disk_array[@]} -lt $disk_limit ]
             then
                 echo -e "${yellow}Raid $raid_type need at least $disk_limit disks.${plain}"
@@ -221,27 +240,78 @@ Format_raid_disk()
 }
 Raid_stop()
 {
-    if [ -b /dev/md0 ]
-    then
-        raid_type=0
-    elif [ -b /dev/md1 ]
-    then
-        raid_type=1
-    elif [ -b /dev/md5 ]
-    then
-        raid_type=5
-    elif [ -b /dev/md10 ]
-    then
-        raid_type=10
-    else
-        echo -e "${green}Look like there doesn't exist any raid.${plain}"
-        exit
-    fi
-    umount /dev/md$raid_type &>/dev/null
-    echo -e "${green}The /dev/md$raid_type hase been umonted.${plain}"
-    mdadm -S /dev/md$raid_type &>/dev/null
-    echo -e "${green}The /dev/md$raid_type hase been stoped.${plain}"
-    sed -i -e '/\/mnt/d' /etc/fstab
+    check_raidtype
+    while true
+    do
+        read -p "Would you want to stop the raid(Y/N):" choise_char
+        [ -z $choise_char ] && choise_char=Y
+        case $choise_char in
+            Y|y)
+                umount /dev/md$raid_type &>/dev/null
+                echo -e "${green}The /dev/md$raid_type hase been umonted.${plain}"
+                mdadm -S /dev/md$raid_type &>/dev/null
+                echo -e "${green}The /dev/md$raid_type hase been stoped.${plain}"
+                sed -i -e '/\/mnt/d' /etc/fstab
+                break
+                ;;
+            N|n)
+                exit 0
+                ;;
+            *)
+                echo -e "${yellow}Your choise is wrong,please retry.${plain}"
+                continue
+                ;;
+        esac
+    done
+}
+Raid_add()
+{
+    check_raidtype
+    while true
+    do
+        read -p "Would you want to add new disk(Y/N):" choise_char
+        [ -z $choise_char ] && choise_char=Y
+        case $choise_char in
+            Y|y)
+                check_path
+                mdadm /dev/md$raid_type -a ${disk_array[@]} &>/dev/null
+                echo -e "${green}The disk ${disk_array[@]} has been added.${plain}"
+                break
+                ;;
+            N|n)
+                exit 0
+                ;;
+            *)
+                echo -e "${yellow}Your choise is wrong,please retry.${plain}"
+                continue
+                ;;
+        esac
+    done
+}
+Raid_remove()
+{
+    check_raidtype
+    while true
+    do
+        read -p "Would you want to remove disk(Y/N):" choise_char
+        [ -z $choise_char ] && choise_char=Y
+        case $choise_char in
+            Y|y)
+                check_path
+                mdadm /dev/md$raid_type -f ${disk_array[@]} &>/dev/null
+                mdadm /dev/md$raid_type -r ${disk_array[@]} &>/dev/null
+                echo -e "${green}The disk ${disk_array[@]} has been removed.${plain}"
+                break
+                ;;
+            N|n)
+                exit 0
+                ;;
+            *)
+                echo -e "${yellow}Your choise is wrong,please retry.${plain}"
+                continue
+                ;;
+        esac
+    done
 }
 Raid_create()
 {
@@ -252,11 +322,11 @@ Raid_create()
 action=$1
 [ -z $1 ] && action=create
 case $action in 
-    create|stop)
+    create|stop|add|remove)
         Raid_$action
         ;;
     *)
         echo "Arguments error! [${action}]"
-        echo "Usage: `basename $0` [install|uninstall]"
+        echo "Usage: `basename $0` [create|stop|add|remove]"
         ;;
 esac
