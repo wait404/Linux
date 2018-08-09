@@ -47,7 +47,7 @@ Choose_folder()
     while true
     do
         read -e -p "请选择共享目录：" folder_path
-        if echo ${folder_path} | grep -q "^/"
+        if echo ${folder_path} | grep -Eq "^/|^~"
         then
             if [ ! -f ${folder_path} ]
             then
