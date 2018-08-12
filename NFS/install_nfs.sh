@@ -227,7 +227,7 @@ Start_service()
 #Test the service
 Test_service()
 {
-    ip_addr=`ip addr | grep "inet" | grep -v "inet6" | grep -Ev "127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9{1,3}]" | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | head -n 1`
+    ip_addr=`ip addr | grep "inet" | grep -v "inet6" | grep -Ev "127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | head -n 1`
     echo -e "${green}可使用 mount -t auto ${ip_addr}:${folder_path} /mnt 进行挂载测试。${plain}"
     echo -e "${green}可在服务器使用 nfsstat -s 查看服务器信息。${plain}"
     echo -e "${green}可在客户端使用 nfsstat -c 查看客户端信息。${plain}"
