@@ -34,7 +34,7 @@ function check_choise_char()
 {
     local choise_char=$1
     choise_char_array=(m M n N y Y)
-    if echo ${choise_char_array[@]} | grep -q "${choise_char}"
+    if echo "${choise_char_array[@]}" | grep -q "${choise_char}"
     then
         return 0
     else
@@ -47,9 +47,9 @@ Choose_folder()
     while true
     do
         read -e -p "请选择共享目录：" folder_path
-        if echo ${folder_path} | grep -Eq "^/|^~"
+        if echo "$folder_path" | grep -Eq "^/|^~"
         then
-            if [ ! -f ${folder_path} ]
+            if [ ! -f "$folder_path" ]
             then
                 break
             else
@@ -62,18 +62,18 @@ Choose_folder()
             continue
         fi
     done
-    if [ ! -d ${folder_path} ]
+    if [ ! -d "$folder_path" ]
     then
         while true
         do
             read -p "该目录不存在，是否创建(Y/N)：" choise_char
-            check_choise_char ${choise_char}
-            [ $? -eq 0 ] && break
+            check_choise_char $choise_char
+            [ "$?" -eq 0 ] && break
         done
-        case ${choise_char} in
+        case $choise_char in
             Y|y)
-                mkdir -p ${folder_path}
-                chmod 777 ${folder_path}
+                mkdir -p $folder_path
+                chmod 777 $folder_path
                 ;;
             N|n)
                 echo -e "${yellow}正在退出。${plain}"
@@ -81,7 +81,7 @@ Choose_folder()
                 ;;
         esac
     else
-        chmod 777 ${folder_path}
+        chmod 777 $folder_path
     fi
 }
 Edit_exports()
@@ -90,19 +90,19 @@ Edit_exports()
     while true
     do
         read -p "是否允许客户端写入(Y/N):" choise_char
-        check_choise_char ${choise_char}
-        [ $? -eq 0 ] && break
+        check_choise_char $choise_char
+        [ "$?" -eq 0 ] && break
     done
-    case ${choise_char} in
+    case $choise_char in
         Y|y)
             the_host_write=rw
             while true
             do
                 read -p "是否同步写入磁盘(Y/N/M)：" choise_char
-                check_choise_char ${choise_char}
-                [ $? -eq 0 ] && break
+                check_choise_char $choise_char
+                [ "$?" -eq 0 ] && break
             done
-            case ${choise_char} in
+            case $choise_char in
                 Y|y)
                     the_host_sync=,sync
                     ;;
@@ -116,10 +116,10 @@ Edit_exports()
             while true
             do
                 read -p "是否一起执行写操作(Y/N/M)：" choise_char
-                check_choise_char ${choise_char}
-                [ $? -eq 0 ] && break
+                check_choise_char $choise_char
+                [ "$?" -eq 0 ] && break
             done
-            case ${choise_char} in
+            case $choise_char in
                 Y|y)
                     the_host_wdelay=,wdelay
                     ;;
@@ -138,10 +138,10 @@ Edit_exports()
     while true
     do
         read -p "是否客户端只能从小于1024的端口进行连接(Y/N/M)：" choise_char
-        check_choise_char ${choise_char}
-        [ $? -eq 0 ] && break
+        check_choise_char $choise_char
+        [ "$?" -eq 0 ] && break
     done
-    case ${choise_char} in
+    case $choise_char in
         Y|y)
             the_host_secure=,secure
             ;;
@@ -155,10 +155,10 @@ Edit_exports()
     while true
     do
         read -p "是否检查父目录的权限(Y/N/M)：" choise_char
-        check_choise_char ${choise_char}
-        [ $? -eq 0 ] && break
+        check_choise_char $choise_char
+        [ "$?" -eq 0 ] && break
     done
-    case ${choise_char} in
+    case $choise_char in
         Y|y)
             the_host_subtree=,subtree_check
             ;;
@@ -172,10 +172,10 @@ Edit_exports()
     while true
     do
         read -p "是否映射为匿名用户及用户群组(Y/N/M)：" choise_char
-        check_choise_char ${choise_char}
-        [ $? -eq 0 ] && break
+        check_choise_char $choise_char
+        [ "$?" -eq 0 ] && break
     done
-    case ${choise_char} in
+    case $choise_char in
         Y|y)
             the_host_all_squash=,all_squash
             ;;
@@ -189,10 +189,10 @@ Edit_exports()
     while true
     do
         read -p "是否将root用户及所属用户群组映射为匿名用户及用户群组(Y/N/M)：" choise_char
-        check_choise_char ${choise_char}
-        [ $? -eq 0 ] && break
+        check_choise_char $choise_char
+        [ "$?" -eq 0 ] && break
     done
-    case ${choise_char} in
+    case $choise_char in
         Y|y)
             the_host_root_squash=,root_squash
             ;;
@@ -203,13 +203,13 @@ Edit_exports()
             the_host_root_squash=
             ;;
     esac
-    echo "${folder_path} ${the_host}(${the_host_write}${the_host_sync}${the_host_secure}${the_host_wdelay}${the_host_subtree}${the_host_all_squash}${the_host_root_squash})" >>  /etc/exports
+    echo "$folder_path $the_host($the_host_write$the_host_sync$the_host_secure$the_host_wdelay$the_host_subtree$the_host_all_squash$the_host_root_squash)" >>  /etc/exports
 }
 #Start the service
 Start_service()
 {
     service_status=`rpcinfo -p | grep "nfs" | wc -l`
-    if [ ${service_status} -eq 0 ]
+    if [ "$service_status" -eq 0 ]
     then
         systemctl start rpcbind
         systemctl enable rpcbind &>/dev/null
@@ -228,14 +228,14 @@ Start_service()
 Test_service()
 {
     ip_addr=`ip addr | grep "inet" | grep -v "inet6" | grep -Ev "127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | head -n 1`
-    echo -e "${green}可使用 mount -t auto ${ip_addr}:${folder_path} /mnt 进行挂载测试。${plain}"
+    echo -e "${green}可使用 mount -t auto $ip_addr:$folder_path /mnt 进行挂载测试。${plain}"
     echo -e "${green}可在服务器使用 nfsstat -s 查看服务器信息。${plain}"
     echo -e "${green}可在客户端使用 nfsstat -c 查看客户端信息。${plain}"
-    echo -e "${green}可在客户端使用 showmount -e ${ip_addr}'查看服务器输出目录。${plain}"
+    echo -e "${green}可在客户端使用 showmount -e $ip_addr'查看服务器输出目录。${plain}"
     echo -e "${green}可在服务器/客户端使用${plain}"
-    echo -e "${green}                    rpcinfo -u ${ip_addr} rpcbind${plain}"
-    echo -e "${green}                    rpcinfo -u ${ip_addr} nfs${plain}"
-    echo -e "${green}                    rpcinfo -u ${ip_addr} mountd${plain}"
+    echo -e "${green}                    rpcinfo -u $ip_addr rpcbind${plain}"
+    echo -e "${green}                    rpcinfo -u $ip_addr nfs${plain}"
+    echo -e "${green}                    rpcinfo -u $ip_addr mountd${plain}"
     echo -e "${green}查看服务器RPC服务信息。${plain}"
 
 }
