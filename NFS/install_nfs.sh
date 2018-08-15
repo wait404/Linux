@@ -17,24 +17,15 @@ echo "#############################################################"
 echo
 #Check permission
 [[ `id -u` -ne 0 ]] && echo -e "${red}Please run as root.${plain}" && exit 1
-#Install service
-Install_service()
-{
-    if [ `rpm -qa |grep "nfs-utils" | wc -l` -eq 0 ]
-    then
-        yum install nfs-utils -y &>/dev/null
-    fi
-    if [ `rpm -qa |grep "nfs-rpcbind" | wc -l` -eq 0 ]
-    then
-        yum install rpcbind -y &>/dev/null
-    fi
-}
 #Check choise char
 function check_choise_char()
 {
     local choise_char=$1
     choise_char_array=(m M n N y Y)
-    if echo "${choise_char_array[@]}" | grep -q "${choise_char}"
+    if [ -z $choise_char ]
+    then
+        return 1
+    elif echo "${choise_char_array[@]}" | grep -q "$choise_char"
     then
         return 0
     else
@@ -134,6 +125,9 @@ Edit_exports()
         N|n)
             the_host_write=ro
             ;;
+        M|m)
+            the_host_write=ro
+            ;;
     esac
     while true
     do
@@ -205,6 +199,18 @@ Edit_exports()
     esac
     echo "$folder_path $the_host($the_host_write$the_host_sync$the_host_secure$the_host_wdelay$the_host_subtree$the_host_all_squash$the_host_root_squash)" >>  /etc/exports
 }
+#Install service
+Install_service()
+{
+    if [ `rpm -qa |grep "nfs-utils" | wc -l` -eq 0 ]
+    then
+        yum install nfs-utils -y &>/dev/null
+    fi
+    if [ `rpm -qa |grep "nfs-rpcbind" | wc -l` -eq 0 ]
+    then
+        yum install rpcbind -y &>/dev/null
+    fi
+}
 #Start the service
 Start_service()
 {
@@ -239,8 +245,8 @@ Test_service()
     echo -e "${green}查看服务器RPC服务信息。${plain}"
 
 }
-Install_service
 Choose_folder
 Edit_exports
+Install_service
 Start_service
 Test_service
