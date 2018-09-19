@@ -14,6 +14,15 @@ echo "#############################################################"
 echo "#                           SWAP                            #"
 echo "#############################################################"
 echo
+#Check status
+Check_status()
+{
+    if [ "$?" -ne 0 ]
+    then
+        echo -e "${red}Error,please check it!${plain}"
+        exit 1
+    fi
+}
 #Check permission
 [[ `id -u` -ne 0 ]] && echo -e "${red}Please run as root.${plain}" && exit 1
 #Check path
@@ -80,8 +89,13 @@ then
 fi
 echo -e "${green}The swap space is creating now...${plain}"
 dd if=/dev/zero of=${dir_path}swap bs=1M count=${swap_count} &>/dev/null
+Check_status
 mkswap ${dir_path}swap &>/dev/null
+Check_status
 chmod 600 ${dir_path}swap
+Check_status
 swapon ${dir_path}swap &>/dev/null
+Check_status
 echo "${dir_path}swap swap swap defaults 0 0" >> /etc/fstab
+Check_status
 echo -e "${green}The swap space create completed.${plain}"
