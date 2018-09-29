@@ -32,7 +32,7 @@ srcdomain domain|源域名（客户机所属的域）。
 dstdomain domain|目的域名（Internet中的服务器所属的域）。
 srcdom_regex expression|对来源的URL做正则匹配表达式。
 dstdom_regex expression|对目的URL做正则匹配表达式。
-Time|指定时间。用法：acl aclname time [day-abbrevs] [h1:\m1-h2:m2] 其中，day-abbrevs可以为：S(Sunday)、M(Monday)、T(Tuesday)、W(Wednesday)、H(Thursday)、F(Friday)、A(Saturday)。
+Time|指定时间。用法：acl aclname time [day-abbrevs] [h1:m1-h2:m2] 其中，day-abbrevs可以为：S(Sunday)、M(Monday)、T(Tuesday)、W(Wednesday)、H(Thursday)、F(Friday)、A(Saturday)。
 port|指定连接端口，如acl SSL_ports port 443。
 proto|指定所使用的通信协议，如acl allowprotolist proto HTTP。
 url_regex|设置URL规则匹配表达式。
