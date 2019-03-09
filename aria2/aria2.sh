@@ -13,11 +13,25 @@ aria2_magic_config_download_link=https://raw.githubusercontent.com/wait404/Linux
 src_path=/usr/local/src
 
 [ "$EUID" -ne 0 ] && echo -e "${red}请使用root运行此脚本。${plain}" && exit 1
-[ ! -e /etc/redhat-release ] && echo -e "${red}此脚本目前仅适配CentOS。${plain}" && exit 1
 
 function Install_dependency()
 {
-    yum install -y gcc gcc-c++ libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel  nettle-devel gmp-devel pkgconfig libtool autoconf automake xorg-x11-util-macros.noarch dh-autoreconf.noarch
+    if [ ! -e /etc/os-version ]
+    then
+        echo -e"${red}此脚本可能无法执行。${plain}"
+        exit 1
+    fi
+    source /etc/os-version
+    if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
+    then
+        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool gcc g++ make
+    elif [[ "$ID" == 'centos' || "$ID" == 'fedora' ]]
+    then
+        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ make xorg-x11-util-macros.noarch dh-autoreconf.noarch
+    else
+        echo -e"${red}此脚本可能无法在您的系统上执行。${plain}"
+        exit 1
+    fi
 }
 function Get_aria2()
 {
@@ -36,7 +50,6 @@ function Install_aria2()
     autoreconf -i
     ./configure
     make && make install
-    ln -sf /usr/local/bin/ari2c /usr/bin/aria2c
 }
 function Misc_aria2()
 {
@@ -91,7 +104,6 @@ function Install_magic_aria2()
 }
 function Uninstall_the_aria2()
 {
-    unlink /usr/bin/aria2c
     rm -rf /usr/local/bin/aria2c /etc/init.d/aria2 /etc/aria2 /home/aria2
     groupdel aria2
     userdel -rf aria2
