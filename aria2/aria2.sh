@@ -25,7 +25,7 @@ function Install_dependency()
     if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
     then
         apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool gcc g++ make
-    elif [[ "$ID" == 'centos' || "$ID" == 'fedora' ]]
+    elif [[ "$ID" == 'centos' || "$ID" == 'fedora' || "$ID" == 'rhel' ]]
     then
         yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ make xorg-x11-util-macros.noarch dh-autoreconf.noarch
     else
