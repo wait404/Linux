@@ -14,12 +14,12 @@ src_path=/usr/local/src
 
 [ "$EUID" -ne 0 ] && echo -e "${red}请使用root运行此脚本。${plain}" && exit 1
 
-if [ !-e /etc/os-version ]
+if [ ! -e /etc/os-release ]
 then
     echo -e"${red}此脚本可能无法执行。${plain}"
     exit 1
 fi
-source /etc/os-version
+source /etc/os-release
 if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
 then
     os_type=debians
