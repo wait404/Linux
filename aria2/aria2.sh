@@ -57,7 +57,7 @@ function Install_aria2()
     cd $src_path/aria2-release-1.34.0
     autoreconf -i
     ./configure
-    make && make install
+    make -j `cat /proc/cpuinfo | grep -c processor` && make install
 }
 function Misc_aria2()
 {
@@ -69,7 +69,7 @@ function Config_aria2()
 {
     wget $aria2_config_download_link -O /etc/aria2/aria2.conf
     wget $aria2_script_download_link -O /etc/init.d/aria2
-    chown -R aria2:aria2 /etc/aria2 /home/aria2
+    chown -R aria2:aria2 /etc/aria2
     chown root:root /etc/init.d/aria2
     chmod a+x /etc/init.d/aria2
     systmctl unmask aria2
@@ -86,11 +86,11 @@ function Config_aria2()
 function Config_magic_aria2()
 {
     wget $aria2_magic_config_download_link -O /etc/aria2/aria2.conf
-    wget $aria2_script_download_link -O /et1c/init.d/aria2
-    chown -R aria2:aria2 /etc/aria2 /home/aria2
+    wget $aria2_script_download_link -O /etc/init.d/aria2
+    chown -R aria2:aria2 /etc/aria2
     chown root:root /etc/init.d/aria2
     chmod a+x /etc/init.d/aria2
-    systmctl unmask aria2
+    systemctl unmask aria2
     service start aria2
     if [ "$os_type" == 'debians' ]
     then
