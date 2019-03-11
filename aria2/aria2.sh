@@ -14,23 +14,31 @@ src_path=/usr/local/src
 
 [ "$EUID" -ne 0 ] && echo -e "${red}请使用root运行此脚本。${plain}" && exit 1
 
+if [ !-e /etc/os-version ]
+then
+    echo -e"${red}此脚本可能无法执行。${plain}"
+    exit 1
+fi
+source /etc/os-version
+if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
+then
+    os_type=debians
+elif [[ "$ID" == 'centos' || "$ID" == 'fedora' || "$ID" == 'rhel' ]]
+then
+    os_type=rhels
+else
+    echo -e"${red}此脚本可能无法在您的系统上执行。${plain}"
+    exit 1
+fi
 function Install_dependency()
 {
-    if [ ! -e /etc/os-version ]
+    if [ "$os_type" == 'debians' ]
     then
-        echo -e"${red}此脚本可能无法执行。${plain}"
-        exit 1
+        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool gcc g++ make sysv-rc-conf
     fi
-    source /etc/os-version
-    if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
+    if [ "$os_type" == 'rhels' ]
     then
-        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool gcc g++ make
-    elif [[ "$ID" == 'centos' || "$ID" == 'fedora' || "$ID" == 'rhel' ]]
-    then
-        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ make xorg-x11-util-macros.noarch dh-autoreconf.noarch
-    else
-        echo -e"${red}此脚本可能无法在您的系统上执行。${plain}"
-        exit 1
+        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake chkconfig gcc gcc-c++ make xorg-x11-util-macros.noarch dh-autoreconf.noarch
     fi
 }
 function Get_aria2()
@@ -54,8 +62,8 @@ function Install_aria2()
 function Misc_aria2()
 {
     groupadd aria2
-    useradd -M -s /sbin/nologin -g aria2 aria2
-    mkdir -p /etc/aria2 /home/aria2
+    useradd -m -s /sbin/nologin -g aria2 aria2
+    mkdir -p /etc/aria2 
 }
 function Config_aria2()
 {
@@ -66,7 +74,14 @@ function Config_aria2()
     chmod a+x /etc/init.d/aria2
     systmctl unmask aria2
     service start aria2
-    chkconfig --add aria2
+    if [ "$os_type" == 'debians' ]
+    then
+        sysv-rc-conf aria2 on
+    fi
+    if [ "$os_type" == 'rhels' ]
+    then
+        chkconfig --add aria2
+    fi
 }
 function Config_magic_aria2()
 {
@@ -77,7 +92,14 @@ function Config_magic_aria2()
     chmod a+x /etc/init.d/aria2
     systmctl unmask aria2
     service start aria2
-    chkconfig --add aria2
+    if [ "$os_type" == 'debians' ]
+    then
+        sysv-rc-conf aria2 on
+    fi
+    if [ "$os_type" == 'rhels' ]
+    then
+        chkconfig --add aria2
+    fi
 }
 function Clean_temp()
 {
