@@ -43,7 +43,7 @@ function Install_dependency()
 }
 function Get_aria2()
 {
-    git clone $ari2_git_link $src_path/aria2
+    git clone $aria2_git_url $src_path/aria2
     #fix a bug.
     sed -i "s#AM_GNU_GETTEXT_VERSION(\[0.18\])#AM_GNU_GETTEXT_VERSION(\[0.19\])#g" $src_path/aria2/configure.ac
 }
@@ -53,7 +53,7 @@ function Edit_aria2()
 }
 function Install_aria2()
 {
-    cd $src_path/aria2-release-1.34.0
+    cd $src_path/aria2
     autoreconf -i
     ./configure
     make -j `cat /proc/cpuinfo | grep -c processor` && make install
@@ -80,7 +80,7 @@ function Config_aria2()
     chown -R aria2:aria2 /etc/aria2
     chmod a+x /etc/systemd/system/aria2.service
     systemctl daemon-reload
-    systemctl start aria2.srvice
+    systemctl start aria2.service
     systemctl enable aria2.service
 }
 function Clean_temp()
