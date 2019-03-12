@@ -9,7 +9,7 @@ plain='\033[0m'
 zabbix_file=https://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/3.0.25/zabbix-3.0.25.tar.gz/download
 zabbix_path=/usr/local/zabbix
 src_path=/usr/local/src
-chinese_font_file=https://https://github.com/wait404/Linux/zabbix/raw/master/simkai.ttf
+chinese_font_file=https://github.com/wait404/Linux/raw/master/zabbix/simkai.ttf
 
 [ "$EUID" -ne 0 ] && echo -e "${red}请使用root运行此脚本。${plain}" && exit 1
 [ ! -e /etc/redhat-release ] && echo -e "${red}此脚本目前仅适配CentOS。${plain}" && exit 1
