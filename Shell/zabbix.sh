@@ -163,7 +163,7 @@ function Install_zabbix()
     service zabbix_agentd start
     chkconfig --level 2345 zabix_server on
     chkconfig --level 2345 zabix_agentd on
-    echo -e "${green}安装完成，zabbix数据库密码为$database_zabbix_password，请妥善保管，web目录路径为$zabbix_web_path。"
+    echo -e "${green}安装完成，zabbix数据库密码为$database_zabbix_password，请妥善保管，web目录路径为$zabbix_web_path。${plain}"
 }
 function Clean_temp_file()
 {
