@@ -6,8 +6,8 @@ red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
 
-aria2_download_link=https://github.com/aria2/aria2/archive/release-1.34.0.tar.gz
-aria2_script_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2
+aria2_git_url=https://github.com/aria2/aria2.git
+aria2_script_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2.service
 aria2_config_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2.conf
 aria2_magic_config_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2-magic.conf
 src_path=/usr/local/src
@@ -34,23 +34,22 @@ function Install_dependency()
 {
     if [ "$os_type" == 'debians' ]
     then
-        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool gcc g++ make sysv-rc-conf
+        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint gcc g++ git make libtool
     fi
     if [ "$os_type" == 'rhels' ]
     then
-        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake chkconfig gcc gcc-c++ make xorg-x11-util-macros.noarch dh-autoreconf.noarch
+        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ git make xorg-x11-util-macros.noarch dh-autoreconf.noarch
     fi
 }
 function Get_aria2()
 {
-    wget $aria2_download_link -O $src_path/aria2.tar.gz
-    tar -zxvf $src_path/aria2.tar.gz -C $src_path
+    git clone $ari2_git_link $src_path/aria2
     #fix a bug.
-    sed -i "s#AM_GNU_GETTEXT_VERSION(\[0.18\])#AM_GNU_GETTEXT_VERSION(\[0.19\])#g" $src_path/aria2-release-1.34.0/configure.ac
+    sed -i "s#AM_GNU_GETTEXT_VERSION(\[0.18\])#AM_GNU_GETTEXT_VERSION(\[0.19\])#g" $src_path/aria2/configure.ac
 }
 function Edit_aria2()
 {
-    sed -i "s#\"1\", 1, 16, 'x'#\"1\", 1, 1024, 'x'#g" $src_path/aria2-release-1.34.0/src/OptionHandlerFactory.cc 
+    sed -i "s#\"1\", 1, 16, 'x'#\"1\", 1, 1024, 'x'#g" $src_path/aria2/src/OptionHandlerFactory.cc 
 }
 function Install_aria2()
 {
@@ -59,47 +58,30 @@ function Install_aria2()
     ./configure
     make -j `cat /proc/cpuinfo | grep -c processor` && make install
 }
-function Misc_aria2()
+function Set_aria2()
 {
-    groupadd aria2
-    useradd -m -s /sbin/nologin -g aria2 aria2
+    groupadd aria2 &> /dev/null
+    useradd -m -s /sbin/nologin -g aria2 aria2 &> /dev/null
     mkdir -p /etc/aria2 
+    touch /etc/aria2/aria2.session
+    chmod 777 /etc/aria2/aria2.session
+}
+function Get_conf()
+{
+    wget $aria2_config_download_link -O /etc/aria2/aria2.conf
+}
+function Get_magic_conf()
+{
+    wget $aria2_magic_config_download_link -O /etc/aria2/aria2.conf
 }
 function Config_aria2()
 {
-    wget $aria2_config_download_link -O /etc/aria2/aria2.conf
-    wget $aria2_script_download_link -O /etc/init.d/aria2
+    wget $aria2_script_download_link -O /etc/systemd/system/aria2.service
     chown -R aria2:aria2 /etc/aria2
-    chown root:root /etc/init.d/aria2
-    chmod a+x /etc/init.d/aria2
-    systmctl unmask aria2
-    service start aria2
-    if [ "$os_type" == 'debians' ]
-    then
-        sysv-rc-conf aria2 on
-    fi
-    if [ "$os_type" == 'rhels' ]
-    then
-        chkconfig --add aria2
-    fi
-}
-function Config_magic_aria2()
-{
-    wget $aria2_magic_config_download_link -O /etc/aria2/aria2.conf
-    wget $aria2_script_download_link -O /etc/init.d/aria2
-    chown -R aria2:aria2 /etc/aria2
-    chown root:root /etc/init.d/aria2
-    chmod a+x /etc/init.d/aria2
-    systemctl unmask aria2
-    service start aria2
-    if [ "$os_type" == 'debians' ]
-    then
-        sysv-rc-conf aria2 on
-    fi
-    if [ "$os_type" == 'rhels' ]
-    then
-        chkconfig --add aria2
-    fi
+    chmod a+x /etc/systemd/system/aria2.service
+    systemctl daemon-reload
+    systemctl start aria2.srvice
+    systemctl enable aria2.service
 }
 function Clean_temp()
 {
@@ -110,7 +92,8 @@ function Install_the_aria2()
     Install_dependency
     Get_aria2
     Install_aria2
-    Misc_aria2
+    Set_aria2
+    Get_conf
     Config_aria2
     Clean_temp
 }
@@ -120,15 +103,18 @@ function Install_magic_aria2()
     Get_aria2
     Edit_aria2
     Install_aria2
-    Misc_aria2
-    Config_magic_aria2
+    Set_aria2
+    Get_magic_conf
+    Config_aria2
     Clean_temp
 }
 function Uninstall_the_aria2()
 {
-    rm -rf /usr/local/bin/aria2c /etc/init.d/aria2 /etc/aria2 /home/aria2
-    groupdel aria2
-    userdel -rf aria2
+    systemctl stop aria2.service
+    systemctl disable aria2.service
+    rm -rf /usr/local/bin/aria2c {/etc,/home}/aria2 /etc/systemd/system/aria2.service
+    userdel -rf aria2 &> /dev/null
+    groupdel aria2 &> /dev/null
 }
 aria2_array=("安装aria2" "安装魔改版aria2" "卸载aria2" "退出")
 for ((i=1;i<=${#aria2_array[@]};i++))

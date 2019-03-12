@@ -1,0 +1,14 @@
+[Unit]
+Description=Aria2c download manager
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=aria2
+Group=aria2
+ExecStart=/usr/local/bin/aria2c --conf-path=/etc/aria2/aria2.conf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
