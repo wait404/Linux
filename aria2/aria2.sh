@@ -83,6 +83,15 @@ function Config_aria2()
     systemctl start aria2.service
     systemctl enable aria2.service
 }
+function Check_aria2()
+{
+    if [ -n `ps -ef | grep aria2c | grep -v grep | awk '{print $2}'` ]
+    then
+        echo -e "${green}aria2安装成功。${plain}"
+    else
+        echo -e "${red}aria2安装失败。${plain}"
+    fi
+}
 function Clean_temp()
 {
     rm -rf $src_path/aria2*
@@ -95,6 +104,7 @@ function Install_the_aria2()
     Set_aria2
     Get_conf
     Config_aria2
+    Check_aria2
     Clean_temp
 }
 function Install_magic_aria2()
@@ -106,6 +116,7 @@ function Install_magic_aria2()
     Set_aria2
     Get_magic_conf
     Config_aria2
+    Check_aria2
     Clean_temp
 }
 function Uninstall_the_aria2()
