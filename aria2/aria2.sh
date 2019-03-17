@@ -85,7 +85,7 @@ function Config_aria2()
 }
 function Check_aria2()
 {
-    if [ -n `ps -ef | grep aria2c | grep -v grep | awk '{print $2}'` ]
+    if [ ! -z `ps -ef | grep aria2c | grep -v grep | awk '{print $2}'` ]
     then
         echo -e "${green}aria2安装成功。${plain}"
     else
