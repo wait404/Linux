@@ -5,11 +5,11 @@ nginx_init=/etc/init.d/nginx
 
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
-if command -v apt-get &>/dev/null
+if command -v apt-get &> /dev/null
 then
     apt-get update
     apt-get install gcc libpcre3 libpcre3-dev openssl libssl-dev zlib1g zlib1g-dev -y
-elif command -v yum &>/dev/null
+elif command -v yum &> /dev/null
 then
     yum update
     yum install gcc pcre pcre-devel openssl openssl-devel zlib zlib-devel -y
@@ -22,6 +22,19 @@ if curl -Is http://nginx.org/download/nginx-${nginx_version}.tar.gz | grep 404 &
 then
     echo "The nginx version is error!"
     exit 1
+fi
+
+read -e -p "Please input nginx user(default user is www):" nginx_user
+if [ -z ${nginx_user} ]
+then
+    nginx_user=www
+else
+    id ${nginx_user} &> /dev/null
+    if [ $? -ne 0 ]
+    then
+        groupadd ${nginx_user}
+        useradd -M -s /sbin/nologin -g ${nginx_user} ${nginx_user}
+    fi
 fi
 
 read -e -p "Please input nginx path(default path is /usr/local/nginx):" nginx_path
@@ -53,7 +66,7 @@ function Install_nginx()
     curl -sSL http://nginx.org/download/nginx-${nginx_version}.tar.gz -o ${src_path}/nginx-${nginx_version}.tar.gz
     tar -zxf ${src_path}/nginx-${nginx_version}.tar.gz -C ${src_path}
     cd ${src_path}/nginx-${nginx_version}
-    ./configure --user=www --group=www --prefix=${nginx_path} --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_sub_module --with-stream --with-stream_ssl_module --add-module=../ngx_brotli --add-module=../ngx_http_substitutions_filter_module --with-openssl=../openssl
+    ./configure --user=${nginx_user} --group=${nginx_user} --prefix=${nginx_path} --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_sub_module --with-stream --with-stream_ssl_module --add-module=../ngx_brotli --add-module=../ngx_http_substitutions_filter_module --with-openssl=../openssl
     make -j `cat /proc/cpuinfo | grep -c processor` && make install
     if [ $? -eq 0 ]
     then
@@ -184,6 +197,7 @@ case "\$1" in
 esac
 EOF
         chmod +x ${nginx_init}
+        ln -sf ${nginx_path}/sbin/nginx /usr/bin/nginx
     fi
 }
 Clean_files()
