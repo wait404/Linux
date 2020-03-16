@@ -5,18 +5,6 @@ nginx_init=/etc/init.d/nginx
 
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
-if command -v apt-get &> /dev/null
-then
-    apt-get update
-    apt-get install gcc libpcre3 libpcre3-dev openssl libssl-dev zlib1g zlib1g-dev -y
-elif command -v yum &> /dev/null
-then
-    yum update
-    yum install gcc pcre pcre-devel openssl openssl-devel zlib zlib-devel -y
-else
-    echo "Please check your OS!"
-    exit 1
-fi
 read -p "Please input nginx version:" nginx_version
 if curl -Is http://nginx.org/download/nginx-${nginx_version}.tar.gz | grep 404 &> /dev/null
 then
@@ -24,7 +12,7 @@ then
     exit 1
 fi
 
-read -e -p "Please input nginx user(default user is www):" nginx_user
+read -p "Please input nginx user(default user is www):" nginx_user
 if [ -z ${nginx_user} ]
 then
     nginx_user=www
@@ -45,6 +33,19 @@ else
     mkdir -p ${nginx_path}
 fi
 
+if command -v apt-get &> /dev/null
+then
+    apt-get update
+    apt-get install gcc libpcre3 libpcre3-dev openssl libssl-dev zlib1g zlib1g-dev -y
+elif command -v yum &> /dev/null
+then
+    yum update
+    yum install gcc pcre pcre-devel openssl openssl-devel zlib zlib-devel -y
+else
+    echo "Please check your OS!"
+    exit 1
+fi
+    
 function Install_http_substitutions()
 {
     git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git ${src_path}/ngx_http_substitutions_filter_module
