@@ -13,34 +13,33 @@ then
 fi
 
 read -p "Please input nginx user(default user is www):" nginx_user
-if [ -z ${nginx_user} ]
+[ -z ${nginx_user} ] && nginx_user=www
+id ${nginx_user} &> /dev/null
+if [ $? -ne 0 ]
 then
-    nginx_user=www
-else
-    id ${nginx_user} &> /dev/null
-    if [ $? -ne 0 ]
-    then
-        groupadd ${nginx_user}
-        useradd -M -s /sbin/nologin -g ${nginx_user} ${nginx_user}
-    fi
+    groupadd ${nginx_user}
+    useradd -M -s /sbin/nologin -g ${nginx_user} ${nginx_user}
 fi
 
 read -e -p "Please input nginx path(default path is /usr/local/nginx):" nginx_path
-if [ -z ${nginx_path} ]
+[ -z ${nginx_path} ] && nginx_path=/usr/local/nginx
+if [ -f ${nginx_path} ]
 then
-    nginx_path=/usr/local/nginx
-else
+    echo "Couldn't create directory,file exists!"
+    exit 1
+elif [ ! -d ${nginx_path} ]
+then
     mkdir -p ${nginx_path}
 fi
 
 if command -v apt-get &> /dev/null
 then
     apt-get update
-    apt-get install curl gcc libpcre3 libpcre3-dev openssl libssl-dev zlib1g zlib1g-dev -y
+    apt-get install gcc libpcre3 libpcre3-dev openssl libssl-dev zlib1g zlib1g-dev -y
 elif command -v yum &> /dev/null
 then
     yum update
-    yum install curl gcc pcre pcre-devel openssl openssl-devel zlib zlib-devel -y
+    yum install gcc pcre pcre-devel openssl openssl-devel zlib zlib-devel -y
 else
     echo "Please check your OS!"
     exit 1
