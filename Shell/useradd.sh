@@ -21,7 +21,7 @@ do
 done
 for ((i=1;i<=$user_num;i++))
 do
-    useradd -m -s /bin/bash user$i
+    useradd -m -s `which bash` user$i
     p1=`echo $RANDOM | md5sum | cut -c -5` &>/dev/null
     p2=`uuidgen | awk -F - '{print $2}' | tr [a-z] [A-Z]` &>/dev/null
     user_passwd=$p1-$p2
