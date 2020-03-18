@@ -202,6 +202,7 @@ EOF
 }
 Clean_files()
 {
+    cd ${src_path}
     rm -rf ${src_path}/openssl* ${src_path}/ngx_brotli ${src_path}/ngx_http_substitutions_filter_module ${src_path}/nginx-${nginx_version}*
     if [ -f ${nginx_path}/sbin/nginx.old ]
     then
