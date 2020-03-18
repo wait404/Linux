@@ -35,10 +35,10 @@ fi
 if command -v apt-get &> /dev/null
 then
     apt-get update
-    apt-get install curl gcc libpcre3 libpcre3-dev make openssl libssl-dev zlib1g zlib1g-dev -y
+    apt-get install curl gcc git libpcre3 libpcre3-dev make openssl libssl-dev zlib1g zlib1g-dev -y
 elif command -v yum &> /dev/null
 then
-    yum install curl gcc pcre pcre-devel make openssl openssl-devel zlib zlib-devel -y
+    yum install curl gcc git pcre pcre-devel make openssl openssl-devel zlib zlib-devel -y
 else
     echo "Please check your OS!"
     exit 1
