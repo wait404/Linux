@@ -65,7 +65,7 @@ function Install_nginx()
     curl -sSL http://nginx.org/download/nginx-${nginx_version}.tar.gz -o ${src_path}/nginx-${nginx_version}.tar.gz
     tar -zxf ${src_path}/nginx-${nginx_version}.tar.gz -C ${src_path}
     cd ${src_path}/nginx-${nginx_version}
-    ./configure --user=${nginx_user} --group=${nginx_user} --prefix=${nginx_path} --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_sub_module --with-stream --with-stream_ssl_module --add-module=../ngx_brotli --add-module=../ngx_http_substitutions_filter_module --with-openssl=../openssl
+    ./configure --user=${nginx_user} --group=${nginx_user} --prefix=${nginx_path} --with-http_stub_status_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_sub_module --with-stream --with-stream_ssl_module --add-module=../ngx_brotli --add-module=../ngx_http_substitutions_filter_module --with-openssl=../openssl
     make -j `cat /proc/cpuinfo | grep -c processor` && make install
     if [ $? -eq 0 ]
     then
