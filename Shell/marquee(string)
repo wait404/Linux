@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+str="欢迎光临！"
+while true
+do
+    clear
+    echo -n $str
+    sleep 0.2
+    str=${str:1}${str:0:1}
+done
