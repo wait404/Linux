@@ -18,7 +18,7 @@ id ${nginx_user} &> /dev/null
 if [ $? -ne 0 ]
 then
     groupadd ${nginx_user}
-    useradd -M -s /sbin/nologin -g ${nginx_user} ${nginx_user}
+    useradd -M -s `which nologin` -g ${nginx_user} ${nginx_user}
 fi
 
 read -e -p "Please input nginx path(default path is /usr/local/nginx):" nginx_path
