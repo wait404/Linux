@@ -5,6 +5,18 @@ nginx_init=/etc/init.d/nginx
 
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
+if command -v apt-get &> /dev/null
+then
+    apt-get update
+    apt-get install curl gcc git libpcre3 libpcre3-dev make openssl libssl-dev zlib1g zlib1g-dev -y
+elif command -v yum &> /dev/null
+then
+    yum install curl gcc git pcre pcre-devel make openssl openssl-devel zlib zlib-devel -y
+else
+    echo "Please check your OS!"
+    exit 1
+fi
+
 read -p "Please input nginx version:" nginx_version
 if curl -Is http://nginx.org/download/nginx-${nginx_version}.tar.gz | grep 404 &> /dev/null
 then
@@ -30,18 +42,6 @@ then
 elif [ ! -d ${nginx_path} ]
 then
     mkdir -p ${nginx_path}
-fi
-
-if command -v apt-get &> /dev/null
-then
-    apt-get update
-    apt-get install curl gcc git libpcre3 libpcre3-dev make openssl libssl-dev zlib1g zlib1g-dev -y
-elif command -v yum &> /dev/null
-then
-    yum install curl gcc git pcre pcre-devel make openssl openssl-devel zlib zlib-devel -y
-else
-    echo "Please check your OS!"
-    exit 1
 fi
     
 function Install_http_substitutions()
