@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 src_path=/usr/local/src
-nginx_service=/etc/systemd/system/nginx.service
+nginx_init=/etc/init.d/nginx
 
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
@@ -75,34 +75,131 @@ function Install_nginx()
         exit 1
     fi
 }
-function Install_nginx_service()
+function Install_nginx_init()
 {
-    if [ ! -f ${nginx_service} ]
+    if [ ! -f ${nginx_init} ]
     then
-        cat > ${nginx_service} <<EOF
-[Unit]
-Description=The NGINX HTTP and reverse proxy server
-After=network.target remote-fs.target nss-lookup.target
+        cat > ${nginx_init} <<EOF
+#! /bin/sh
 
-[Service]
-Type=forking
-PIDFile=${nginx_path}/logs/nginx.pid
-ExecStart=${nginx_path}/sbin/nginx -c ${nginx_path}/conf/nginx.conf
-ExecReload=${nginx_path}/sbin/nginx -s reload
-ExecStop=/bin/kill -s QUIT \$MAINPID
-PrivateTmp=false
+### BEGIN INIT INFO
+# Provides:          nginx
+# Required-Start:    \$local_fs \$network \$remote_fs
+# Required-Stop:     \$local_fs \$network \$remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the nginx web server
+# Description:       starts nginx using start-stop-daemon
+### END INIT INFO
 
-[Install]
-WantedBy=multi-user.target
+NGINX_BIN='${nginx_path}/sbin/nginx'
+CONFIG='${nginx_path}/conf/nginx.conf'
+
+case "\$1" in
+    start)
+        echo -n "Starting nginx... "
+
+        PID=\$(ps -ef | grep "\$NGINX_BIN" | grep -v grep | awk '{print \$2}')
+        if [ "\$PID" != "" ]; then
+            echo "nginx (pid \$PID) already running."
+            exit 1
+        fi
+
+        \$NGINX_BIN -c \$CONFIG
+
+        if [ "\$?" != 0 ]; then
+            echo " failed"
+            exit 1
+        else
+            echo " done"
+        fi
+        ;;
+
+    stop)
+        echo -n "Stoping nginx... "
+
+        PID=\$(ps -ef | grep "\$NGINX_BIN" | grep -v grep | awk '{print \$2}')
+        if [ "\$PID" = "" ]; then
+            echo "nginx is not running."
+            exit 1
+        fi
+
+        \$NGINX_BIN -s stop
+
+        if [ "\$?" != 0 ] ; then
+            echo " failed. Use force-quit"
+            \$0 force-quit
+        else
+            echo " done"
+        fi
+        ;;
+
+    status)
+        PID=\$(ps -ef | grep "\$NGINX_BIN" | grep -v grep | awk '{print \$2}')
+        if [ "\$PID" != "" ]; then
+            echo "nginx (pid \$PID) is running..."
+        else
+            echo "nginx is stopped."
+            exit 0
+        fi
+        ;;
+
+    force-quit|kill)
+        echo -n "Terminating nginx... "
+
+        PID=\$(ps -ef | grep "\$NGINX_BIN" | grep -v grep | awk '{print \$2}')
+        if [ "\$PID" = "" ]; then
+            echo "nginx is is stopped."
+            exit 1
+        fi
+
+        kill \$PID
+
+        if [ "\$?" != 0 ]; then
+            echo " failed"
+            exit 1
+        else
+            echo " done"
+        fi
+        ;;
+
+    restart)
+        \$0 stop
+        sleep 1
+        \$0 start
+        ;;
+
+    reload)
+        echo -n "Reload nginx... "
+
+        PID=\$(ps -ef | grep "\$NGINX_BIN" | grep -v grep | awk '{print \$2}')
+        if [ "\$PID" != "" ]; then
+            \$NGINX_BIN -s reload
+            echo " done"
+        else
+            echo "nginx is not running, can't reload."
+            exit 1
+        fi
+        ;;
+
+    configtest)
+        echo -n "Test nginx configure files... "
+
+        \$NGINX_BIN -t
+        ;;
+
+    *)
+        echo "Usage: \$0 {start|stop|restart|reload|status|configtest|force-quit|kill}"
+        exit 1
+        ;;
+
+esac
 EOF
-        chmod +x ${nginx_service}
-        systemctl daemon-reload
-        systemctl enable nginx
+        chmod +x ${nginx_init}
         ln -sf ${nginx_path}/sbin/nginx /usr/bin/nginx
     fi
 }
-
-function Clean_files()
+Clean_files()
 {
     cd ${src_path}
     rm -rf ${src_path}/openssl* ${src_path}/ngx_brotli ${src_path}/ngx_http_substitutions_filter_module ${src_path}/nginx-${nginx_version}*
@@ -116,8 +213,8 @@ Install_http_substitutions
 Install_brotli
 Install_openssl
 Install_nginx
-Install_nginx_service
+Install_nginx_init
 Clean_files
-systemctl restart nginx
+${nginx_init} restart
 echo "The nginx version is:"
 ${nginx_path}/sbin/nginx -v
