@@ -56,9 +56,9 @@ function Install_brotli()
 }
 function Install_openssl()
 {
-    curl -sSL https://www.openssl.org/source/old/1.1.1/openssl-1.1.1.tar.gz -o ${src_path}/openssl-1.1.1.tar.gz
-    tar -zxf ${src_path}/openssl-1.1.1.tar.gz -C ${src_path}
-    mv ${src_path}/openssl-1.1.1 ${src_path}/openssl
+    curl -sSL https://www.openssl.org/source/old/1.1.1/openssl-1.1.1g.tar.gz -o ${src_path}/openssl-1.1.1g.tar.gz
+    tar -zxf ${src_path}/openssl-1.1.1g.tar.gz -C ${src_path}
+    mv ${src_path}/openssl-1.1.1g ${src_path}/openssl
 }
 function Install_nginx()
 {
