@@ -140,7 +140,7 @@ function Install_zabbix()
     sed -i "s#\# DBSocket=#DBSocket=${mysql_sock_path}#g" ${zabbix_path}/etc/zabbix_server.conf
     \cp -r ${src_path}/zabbix-5.0.9/ui/* ${zabbix_web_path}
     wget ${simkai_font_file} -O ${zabbix_web_path}/assets/fonts/simkai.ttf
-    sed -i 's#DejaVuSans#simkai#g' $zabbix_web_path/include/defines.inc.php
+    sed -i 's#DejaVuSans#simkai#g' ${zabbix_web_path}/include/defines.inc.php
     chown -R www:www ${zabbix_web_path}
 
     service zabbix_server start
@@ -167,6 +167,7 @@ function Uninstall_zabbix()
     userdel zabbix &> /dev/null
     groupdel zabbix &> /dev/null
     rm -rf /home/wwwroot/zabbix /usr/local/zabbix /etc/init.d/zabbix_{server,agentd} /tmp/zabbix*
+    echo -e "${green}卸载完成。${plain}"
 }
 function Install_the_zabbix()
 {
