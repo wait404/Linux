@@ -60,16 +60,21 @@ then
 fi
 cat > /etc/my.cnf <<EOF
 [client]
-#password   = your_password
-port        = 3306
-socket      = /tmp/mysql.sock
+#password = your_password
+port = 3306
+socket = /tmp/mysql.sock
 default-character-set=utf8mb4
+ssl-ca=${mysql_path}/data/ca.pem
+ssl-cert=${mysql_path}/data/client-cert.pem
+ssl-key=${mysql_path}/data/client-key.pem
 [mysqld]
-port        = 3306
-socket      = /tmp/mysql.sock
+port = 3306
+socket = /tmp/mysql.sock
+character-set-server = utf8mb4
+collation-server = utf8mb4_general_ci
+require_secure_transport = ON
+bind-address = 0.0.0.0
 datadir = ${mysql_path}/data
-character-set-server=utf8mb4
-collation-server=utf8mb4_general_ci
 skip-external-locking
 key_buffer_size = 16M
 max_allowed_packet = 1M
@@ -90,7 +95,7 @@ max_connect_errors = 100
 open_files_limit = 65535
 log-bin=mysql-bin
 binlog_format=mixed
-server-id   = 1
+server-id = 1
 expire_logs_days = 10
 early-plugin-load = ""
 default_storage_engine = InnoDB
@@ -103,19 +108,15 @@ innodb_log_file_size = 5M
 innodb_log_buffer_size = 8M
 innodb_flush_log_at_trx_commit = 1
 innodb_lock_wait_timeout = 50
+ssl-ca=${mysql_path}/data/ca.pem
+ssl-cert=${mysql_path}/data/server-cert.pem
+ssl-key=${mysql_path}/data/server-key.pem
 [mysqldump]
 quick
 max_allowed_packet = 16M
 [mysql]
 no-auto-rehash
 default-character-set=utf8mb4
-ssl-ca=${mysql_path}/data/ca.pem
-ssl-cert=${mysql_path}/data/client-cert.pem
-ssl-key=${mysql_path}/data/client-key.pem
-[mysqld]
-ssl-ca=${mysql_path}/data/ca.pem
-ssl-cert=${mysql_path}/data/client-cert.pem
-ssl-key=${mysql_path}/data/client-key.pem
 [myisamchk]
 key_buffer_size = 20M
 sort_buffer_size = 20M
@@ -143,7 +144,8 @@ mysqladmin -u root password "${mysql_password}"
 chown mysql:mysql ${mysql_path}/data/*.pem
 /etc/init.d/mysql restart
 
-if /etc/init.d/mysql status | grep "SUCCESS"
+pidof mysqld &> /dev/null
+if [ $? -eq 0 ]
 then
     echo "Success,password is ${mysql_password}."
     chkconfig --add mysql
