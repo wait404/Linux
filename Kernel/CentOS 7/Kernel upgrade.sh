@@ -1,6 +1,4 @@
-#!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
-export PATH
+#!/usr/bin/env bash
 
 #Color
 red='\033[0;31m'
@@ -16,12 +14,14 @@ then
     exit 1
 fi
 #Install yum-utils
-if [ `rpm -qa | grep yum-utils | wc -l` -eq 0 ]
+rpm -qa | grep yum-utils
+if [ "$?" -ne 0 ]
 then
     yum install yum-utils -y
 fi
 #Install elrepo
-if [ `rpm -qa | grep elrepo-release | wc -l` -eq 0 ]
+rpm -qa | grep elrepo-release
+if [ "$?" -ne 0 ]
 then
     #Import the public key
     rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
@@ -38,8 +38,8 @@ yum --enablerepo=elrepo-kernel install kernel-ml-devel kernel-ml -y
 #Set the default start
 grub2-set-default 0
 #Reboot the system
-read -t 10 -p "Would you want to reboot the system(Y/N):" -e -i Y choice_char
-case $choice_char in
+read -p "Would you want to reboot the system(Y/N):" -e -i Y choice_char
+case ${choice_char} in
     Y|y)
         init 6
         ;;

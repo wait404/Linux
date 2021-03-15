@@ -1,17 +1,17 @@
-#Download kernel
+## Download kernel
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-headers-version-version-date_all.deb
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-headers-version-generic_version-date_amd64.deb
 wget http://kernel.ubuntu.com/~kernel-ppa/mainline/version/linux-image-version-generic_version-date_amd64.deb
 
-#Install
+## Install
 sudo dpkg -i *.deb
 
-#Reboot
+## Reboot
 reboot
 
-#Remove old kernel
+## Remove old kernel
 dpkg --get-selections | grep linux
 sudo apt-get remove linux-image-version
 
-#Remove deinstall
+## Remove deinstall
 sudo dpkg -P linux-image-version
