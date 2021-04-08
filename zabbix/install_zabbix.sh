@@ -132,7 +132,7 @@ function Install_zabbix()
     mysql -u zabbix -p${database_zabbix_password} zabbix < ${src_path}/zabbix-5.0.9/database/mysql/schema.sql &> /dev/null
     mysql -u zabbix -p${database_zabbix_password} zabbix < ${src_path}/zabbix-5.0.9/database/mysql/images.sql &> /dev/null
     mysql -u zabbix -p${database_zabbix_password} zabbix < ${src_path}/zabbix-5.0.9/database/mysql/data.sql &> /dev/null
-    sed -i "s#BASEDIR=/usr/local#BASEDIR=$zabbix_path#g" ${src_path}/zabbix-5.0.9/misc/init.d/fedora/core/zabbix_*
+    sed -i "s#BASEDIR=/usr/local#BASEDIR=${zabbix_path}#g" ${src_path}/zabbix-5.0.9/misc/init.d/fedora/core/zabbix_*
     \cp ${src_path}/zabbix-5.0.9/misc/init.d/fedora/core/zabbix_* /etc/init.d/
     chmod a+x /etc/init.d/zabbix_*
     sed -i "s#\# DBPassword=#DBPassword=${database_zabbix_password}#g" ${zabbix_path}/etc/zabbix_server.conf
