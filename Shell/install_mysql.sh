@@ -38,10 +38,10 @@ then
     useradd -s /sbin/nologin -M -g mysql mysql
 fi
 
-wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.33-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
+wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
 tar -zxvf ${local_path}/mysql.tar.gz -C ${local_path}
 rm ${local_path}/mysql.tar.gz -rf
-mv ${local_path}/mysql-5.7.33-linux-glibc2.12-x86_64 ${mysql_path}
+mv ${local_path}/mysql-5.7.34-linux-glibc2.12-x86_64 ${mysql_path}
 mkdir ${mysql_path}/data
 chown -R mysql:mysql ${mysql_path}/data
 chgrp -R mysql ${mysql_path}
