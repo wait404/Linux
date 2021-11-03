@@ -1,12 +1,12 @@
 #!/bin/bash
 for i in {1..254}
 do
-    echo -n "192.168.0.$i"
-    if ping -c 2 192.168.0.$i | grep "100% packet loss" &>/dev/null
+    ping -c 2 192.168.0.$i &> /dev/null
+    if [ $? -ne 0 ]
     then
-        echo "  fail"
+        echo "192.168.0.$i  fail\n"
     else
-        echo "  success"
+        echo "192.168.0.$i  success\n"
     fi
     let i++
     sleep 1s
