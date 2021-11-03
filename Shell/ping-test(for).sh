@@ -4,9 +4,9 @@ do
     ping -c 2 192.168.0.$i &> /dev/null
     if [ $? -ne 0 ]
     then
-        echo "192.168.0.$i  fail\n"
+        echo -e "192.168.0.$i  fail\n"
     else
-        echo "192.168.0.$i  success\n"
+        echo -e "192.168.0.$i  success\n"
     fi
     let i++
     sleep 1s
