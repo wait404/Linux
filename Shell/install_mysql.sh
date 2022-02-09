@@ -38,10 +38,10 @@ then
     useradd -s /sbin/nologin -M -g mysql mysql
 fi
 
-wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
+wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.36-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
 tar -zxvf ${local_path}/mysql.tar.gz -C ${local_path}
 rm ${local_path}/mysql.tar.gz -rf
-mv ${local_path}/mysql-5.7.34-linux-glibc2.12-x86_64 ${mysql_path}
+mv ${local_path}/mysql-5.7.36-linux-glibc2.12-x86_64 ${mysql_path}
 mkdir ${mysql_path}/data
 chown -R mysql:mysql ${mysql_path}/data
 chgrp -R mysql ${mysql_path}
@@ -130,6 +130,8 @@ EOF
 
 ${mysql_path}/bin/mysqld --initialize-insecure --basedir=${mysql_path} --datadir=${mysql_path}/data --user=mysql
 ${mysql_path}/bin/mysql_ssl_rsa_setup
+chown mysql:mysql ${mysql_path}/data/*.pem
+
 \cp ${mysql_path}/support-files/mysql.server /etc/init.d/mysql
 
 ln -sf ${mysql_path}/bin/mysqladmin /usr/bin/mysqladmin
@@ -139,10 +141,8 @@ ln -sf ${mysql_path}/bin/myisamchk /usr/bin/myisamchk
 ln -sf ${mysql_path}/bin/mysqld_safe /usr/bin/mysqld_safe
 ln -sf ${mysql_path}/bin/mysqlcheck /usr/bin/mysqlcheck
 
-/etc/init.d/mysql start
-mysqladmin -u root password "${mysql_password}"
-chown mysql:mysql ${mysql_path}/data/*.pem
 /etc/init.d/mysql restart
+mysqladmin -u root password "${mysql_password}"
 
 pidof mysqld &> /dev/null
 if [ $? -eq 0 ]
