@@ -63,10 +63,10 @@ cat > /etc/my.cnf <<EOF
 #password = your_password
 port = 3306
 socket = /tmp/mysql.sock
-default-character-set=utf8mb4
-ssl-ca=${mysql_path}/data/ca.pem
-ssl-cert=${mysql_path}/data/client-cert.pem
-ssl-key=${mysql_path}/data/client-key.pem
+default-character-set = utf8mb4
+ssl-ca = ${mysql_path}/data/ca.pem
+ssl-cert = ${mysql_path}/data/client-cert.pem
+ssl-key = ${mysql_path}/data/client-key.pem
 [mysqld]
 port = 3306
 socket = /tmp/mysql.sock
@@ -93,8 +93,8 @@ explicit_defaults_for_timestamp = true
 max_connections = 500
 max_connect_errors = 100
 open_files_limit = 65535
-log-bin=mysql-bin
-binlog_format=mixed
+log-bin = mysql-bin
+binlog_format = mixed
 server-id = 1
 expire_logs_days = 10
 early-plugin-load = ""
@@ -108,15 +108,15 @@ innodb_log_file_size = 5M
 innodb_log_buffer_size = 8M
 innodb_flush_log_at_trx_commit = 1
 innodb_lock_wait_timeout = 50
-ssl-ca=${mysql_path}/data/ca.pem
-ssl-cert=${mysql_path}/data/server-cert.pem
-ssl-key=${mysql_path}/data/server-key.pem
+ssl-ca = ${mysql_path}/data/ca.pem
+ssl-cert = ${mysql_path}/data/server-cert.pem
+ssl-key = ${mysql_path}/data/server-key.pem
 [mysqldump]
 quick
 max_allowed_packet = 16M
 [mysql]
 no-auto-rehash
-default-character-set=utf8mb4
+default-character-set = utf8mb4
 [myisamchk]
 key_buffer_size = 20M
 sort_buffer_size = 20M
@@ -125,7 +125,7 @@ write_buffer = 2M
 [mysqlhotcopy]
 interactive-timeout
 [mysqld_safe]
-malloc-lib=/usr/lib64/libtcmalloc.so
+malloc-lib = /usr/lib64/libtcmalloc.so
 EOF
 
 ${mysql_path}/bin/mysqld --initialize-insecure --basedir=${mysql_path} --datadir=${mysql_path}/data --user=mysql
