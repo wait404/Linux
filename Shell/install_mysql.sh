@@ -72,7 +72,7 @@ port = 3306
 socket = /tmp/mysql.sock
 character-set-server = utf8mb4
 collation-server = utf8mb4_general_ci
-require_secure_transport = ON
+require_secure_transport = OFF
 bind-address = 0.0.0.0
 datadir = ${mysql_path}/data
 skip-external-locking
