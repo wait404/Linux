@@ -8,7 +8,7 @@ mysql_path=/usr/local/mysql
 source /etc/os-release
 if [[ $ID -eq 'centos' && $VERSION_ID -eq '7' ]]
 then
-    yum install libaio gperftools-libs -y
+    yum install epel-release libaio gperftools-libs -y
     ln -sf /usr/lib64/libtcmalloc.so.4 /usr/lib64/libtcmalloc.so
 else
     echo "The script only support CentOS 7!"
