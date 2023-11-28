@@ -6,12 +6,13 @@ mysql_path=/usr/local/mysql
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
 source /etc/os-release
-if [[ $ID -eq 'centos' && $VERSION_ID -eq '7' ]]
+if [[ $ID -eq 'almalinux' && $VERSION_ID -eq '8.9' ]]
 then
-    yum install epel-release libaio gperftools-libs -y
+    yum install epel-release -y
+    yum install libaio ncurses-compat-libs gperftools-libs -y
     ln -sf /usr/lib64/libtcmalloc.so.4 /usr/lib64/libtcmalloc.so
 else
-    echo "The script only support CentOS 7!"
+    echo "The script only support AlmaLinux 8.9!"
     exit 1
 fi
 
@@ -38,7 +39,7 @@ then
     useradd -s /sbin/nologin -M -g mysql mysql
 fi
 
-wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.36-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
+wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.43-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
 tar -zxvf ${local_path}/mysql.tar.gz -C ${local_path}
 rm ${local_path}/mysql.tar.gz -rf
 mv ${local_path}/mysql-5.7.36-linux-glibc2.12-x86_64 ${mysql_path}
