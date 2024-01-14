@@ -151,4 +151,5 @@ then
     /lib/systemd/systemd-sysv-install enable mysql
 else
     echo "Fail,please check!"
+    exit 1
 fi

@@ -152,4 +152,5 @@ then
     chkconfig --add mysql
 else
     echo "Fail,please check!"
+    exit 1
 fi
