@@ -6,13 +6,12 @@ mysql_path=/usr/local/mysql
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
 source /etc/os-release
-if [[ $ID -eq 'almalinux' && $VERSION_ID -eq '8.9' ]]
+if [[ $ID -eq 'debian' && $VERSION_ID -eq '12' ]]
 then
-    yum install epel-release -y
-    yum install libaio ncurses-compat-libs gperftools-libs -y
-    ln -sf /usr/lib64/libtcmalloc.so.4 /usr/lib64/libtcmalloc.so
+    apt install libaio1 libncurses5 libtcmalloc-minimal4 sysv-rc-conf -y
+    ln -sf /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so
 else
-    echo "The script only support AlmaLinux 8.9!"
+    echo "The script only support Debian 12!"
     exit 1
 fi
 
@@ -39,10 +38,10 @@ then
     useradd -s /sbin/nologin -M -g mysql mysql
 fi
 
-wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.43-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
+wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.44-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
 tar -zxvf ${local_path}/mysql.tar.gz -C ${local_path}
 rm ${local_path}/mysql.tar.gz -rf
-mv ${local_path}/mysql-5.7.36-linux-glibc2.12-x86_64 ${mysql_path}
+mv ${local_path}/mysql-5.7.44-linux-glibc2.12-x86_64 ${mysql_path}
 mkdir ${mysql_path}/data
 chown -R mysql:mysql ${mysql_path}/data
 chgrp -R mysql ${mysql_path}
@@ -126,7 +125,7 @@ write_buffer = 2M
 [mysqlhotcopy]
 interactive-timeout
 [mysqld_safe]
-malloc-lib = /usr/lib64/libtcmalloc.so
+malloc-lib = /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so
 EOF
 
 ${mysql_path}/bin/mysqld --initialize-insecure --basedir=${mysql_path} --datadir=${mysql_path}/data --user=mysql
@@ -149,7 +148,7 @@ pidof mysqld &> /dev/null
 if [ $? -eq 0 ]
 then
     echo "Success,password is ${mysql_password}."
-    chkconfig --add mysql
+    sysv-rc-conf mysql on
 else
     echo "Fail,please check!"
 fi
