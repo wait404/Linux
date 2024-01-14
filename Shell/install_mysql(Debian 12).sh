@@ -148,7 +148,6 @@ pidof mysqld &> /dev/null
 if [ $? -eq 0 ]
 then
     echo "Success,password is ${mysql_password}."
-    sysv-rc-conf mysql on
 else
     echo "Fail,please check!"
 fi
