@@ -148,6 +148,7 @@ pidof mysqld &> /dev/null
 if [ $? -eq 0 ]
 then
     echo "Success,password is ${mysql_password}."
+    /lib/systemd/systemd-sysv-install enable mysql
 else
     echo "Fail,please check!"
 fi
