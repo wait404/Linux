@@ -8,7 +8,7 @@ mysql_path=/usr/local/mysql
 source /etc/os-release
 if [[ $ID -eq 'debian' && $VERSION_ID -eq '12' ]]
 then
-    apt install libaio1 libncurses5 libtcmalloc-minimal4 sysv-rc-conf -y
+    apt install libaio1 libncurses5 libtcmalloc-minimal4 -y
     ln -sf /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so
 else
     echo "The script only support Debian 12!"
