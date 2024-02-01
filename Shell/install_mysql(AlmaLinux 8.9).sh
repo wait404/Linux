@@ -36,7 +36,7 @@ fi
 egrep mysql /etc/passwd &> /dev/null
 if [ $? -ne 0 ]
 then
-    useradd -s /sbin/nologin -M -g mysql mysql
+    useradd -s `which nologin` -M -g mysql mysql
 fi
 
 wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.44-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
