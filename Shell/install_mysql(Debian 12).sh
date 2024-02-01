@@ -6,7 +6,7 @@ mysql_path=/usr/local/mysql
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
 source /etc/os-release
-if [[ $ID -eq 'debian' && $VERSION_ID -eq '12' ]]
+if [[ $ID == 'debian' && $VERSION_ID == '12' ]]
 then
     apt install libaio1 libncurses5 libtcmalloc-minimal4 -y
     ln -sf /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so
@@ -35,7 +35,7 @@ fi
 egrep mysql /etc/passwd &> /dev/null
 if [ $? -ne 0 ]
 then
-    useradd -s /sbin/nologin -M -g mysql mysql
+    useradd -s `which nologin` -M -g mysql mysql
 fi
 
 wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.44-linux-glibc2.12-x86_64.tar.gz -O ${local_path}/mysql.tar.gz
