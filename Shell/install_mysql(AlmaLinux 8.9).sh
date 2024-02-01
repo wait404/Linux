@@ -6,7 +6,7 @@ mysql_path=/usr/local/mysql
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
 source /etc/os-release
-if [[ $ID -eq 'almalinux' && $VERSION_ID -eq '8.9' ]]
+if [[ $ID == 'almalinux' && $VERSION_ID == '8.9' ]]
 then
     yum install epel-release -y
     yum install libaio ncurses-compat-libs gperftools-libs -y
