@@ -8,9 +8,9 @@ plain='\033[0m'
 [[ `id -u` -ne 0 ]] && echo -e "${red}Please run as root.${plain}" && exit 1
 #Check os
 source /etc/os-release
-if [ "$ID" != "centos" ]
+if [[ "$ID" != "almalinux" && "$VERSION_ID" != "8.10" ]]
 then
-    echo -e "${red}The script could only be  run on CentOS.${plain}"
+    echo -e "${red}The script could only be  run on AlmaLinux 8.10.${plain}"
     exit 1
 fi
 #Install yum-utils
@@ -25,8 +25,8 @@ if [ "$?" -ne 0 ]
 then
     #Import the public key
     rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-    #To install ELRepo for RHEL-7, SL-7 or CentOS-7
-    rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+    #To install ELRepo for RHEL-8
+    yum install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
 fi
 if [ ! -f /etc/yum.repos.d/elrepo.repo ]
 then
@@ -34,7 +34,7 @@ then
     exit 1
 fi
 #To install kernel
-yum --enablerepo=elrepo-kernel install kernel-ml-devel kernel-ml -y
+yum --enablerepo=elrepo-kernel install kernel-lt-devel kernel-lt -y
 #Set the default start
 grub2-set-default 0
 #Reboot the system

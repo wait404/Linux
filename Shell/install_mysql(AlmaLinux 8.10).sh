@@ -6,13 +6,13 @@ mysql_path=/usr/local/mysql
 [ $EUID -ne 0 ] && echo "Please run as root." && exit 1
 
 source /etc/os-release
-if [[ $ID == 'almalinux' && $VERSION_ID == '8.9' ]]
+if [[ $ID == 'almalinux' && $VERSION_ID == '8.10' ]]
 then
     yum install epel-release -y
     yum install libaio ncurses-compat-libs gperftools-libs -y
     ln -sf /usr/lib64/libtcmalloc.so.4 /usr/lib64/libtcmalloc.so
 else
-    echo "The script only support AlmaLinux 8.9!"
+    echo "The script only support AlmaLinux 8.10!"
     exit 1
 fi
 
