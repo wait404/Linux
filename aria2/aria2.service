@@ -6,10 +6,10 @@ After=network.target
 Type=simple
 User=aria2
 Group=aria2
-ExecStart=/path/aria2c --conf-path=/path/aria2.conf
+ExecStart=/usr/local/bin/aria2c --conf-path=/etc/aria2/aria2.conf
 ExecStop=/bin/kill -s QUIT $MAINPID
 Restart=on-failure
-RestartSec=2s
+RestartSec=3s
 
 [Install]
 WantedBy=multi-user.target

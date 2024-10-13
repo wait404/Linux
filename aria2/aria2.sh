@@ -10,6 +10,8 @@ aria2_git_url=https://github.com/aria2/aria2.git
 aria2_script_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2.service
 aria2_config_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2.conf
 aria2_magic_config_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/aria2-magic.conf
+aria2_dht_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/dht.dat
+aria2_dht6_download_link=https://raw.githubusercontent.com/wait404/Linux/master/aria2/dht6.dat
 src_path=/usr/local/src
 
 [ "$EUID" -ne 0 ] && echo -e "${red}请使用root运行此脚本。${plain}" && exit 1
@@ -23,11 +25,11 @@ source /etc/os-release
 if [[ "$ID" == 'debian' || "$ID" == 'ubuntu' || "$ID" == 'deepin' || "$ID" == 'kali' ]]
 then
     os_type=debians
-elif [[ "$ID" == 'centos' || "$ID" == 'fedora' || "$ID" == 'rhel' ]]
+elif [[ "$ID" == 'centos' || "$ID" == 'fedora' || "$ID" == 'rhel' || "$ID" == 'almalinux' ]]
 then
     os_type=rhels
 else
-    echo -e"${red}此脚本可能无法在您的系统上执行。${plain}"
+    echo -e"${red}此脚本可能无法在您的系统上运行。${plain}"
     exit 1
 fi
 function Install_dependency()
@@ -38,14 +40,12 @@ function Install_dependency()
     fi
     if [ "$os_type" == 'rhels' ]
     then
-        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ git make xorg-x11-util-macros.noarch dh-autoreconf.noarch
+        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ git make xorg-x11-util-macros.noarch dh-autoreconf.noarch
     fi
 }
 function Get_aria2()
 {
     git clone $aria2_git_url $src_path/aria2
-    #fix a bug.
-    sed -i "s#AM_GNU_GETTEXT_VERSION(\[0.18\])#AM_GNU_GETTEXT_VERSION(\[0.19\])#g" $src_path/aria2/configure.ac
 }
 function Edit_aria2()
 {
@@ -74,18 +74,22 @@ function Get_magic_conf()
 {
     wget $aria2_magic_config_download_link -O /etc/aria2/aria2.conf
 }
+function Get_dht_file()
+{
+    wget $aria2_dht_download_link -O /etc/aria2/dht.dat
+    wget $aria2_dht6_download_link -O /etc/aria2/dht6.dat
+}
 function Config_aria2()
 {
     wget $aria2_script_download_link -O /etc/systemd/system/aria2.service
     chown -R aria2:aria2 /etc/aria2
-    chmod a+x /etc/systemd/system/aria2.service
     systemctl daemon-reload
     systemctl start aria2.service
     systemctl enable aria2.service
 }
 function Check_aria2()
 {
-    if [ ! -z `ps -ef | grep aria2c | grep -v grep | awk '{print $2}'` ]
+    if pidof aria2c &> /dev/null
     then
         echo -e "${green}aria2安装成功。${plain}"
     else
@@ -103,6 +107,7 @@ function Install_the_aria2()
     Install_aria2
     Set_aria2
     Get_conf
+    Get_dht_file
     Config_aria2
     Check_aria2
     Clean_temp
@@ -115,6 +120,7 @@ function Install_magic_aria2()
     Install_aria2
     Set_aria2
     Get_magic_conf
+    Get_dht_file
     Config_aria2
     Check_aria2
     Clean_temp
