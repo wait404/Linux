@@ -36,11 +36,11 @@ function Install_dependency()
 {
     if [ "$os_type" == 'debians' ]
     then
-        apt install -y libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config libssl-dev libcppunit-dev autoconf automake autotools-dev autopoint gcc g++ git make libtool
+        apt install -y autoconf automake autopoint autotools-dev g++ gcc libc-ares-dev libcppunit-dev libsqlite3-dev libssh2-1-dev libssl-dev libtool libxml2-dev make pkg-config zlib1g-dev
     fi
     if [ "$os_type" == 'rhels' ]
     then
-        yum install -y libgcrypt-devel libxml2-devel libssh2-devel openssl-devel gettext-devel cppunit-devel  c-ares-devel zlib-devel sqlite-devel pkgconfig libtool autoconf automake gcc gcc-c++ git make xorg-x11-util-macros.noarch dh-autoreconf.noarch
+        yum install -y autoconf automake c-ares-devel cppunit-devel dh-autoreconf.noarch gcc gcc-c++ gettext-devel libgcrypt-devel libssh2-devel libtool libxml2-devel make openssl-devel pkgconfig sqlite-devel xorg-x11-util-macros.noarch zlib-devel
     fi
 }
 function Get_aria2()
