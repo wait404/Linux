@@ -46,7 +46,7 @@ fi
 
 function Install_boringssl()
 {
-    git clone https://boringssl.googlesource.com/boringssl ${src}/boringssl
+    git clone https://boringssl.googlesource.com/boringssl ${src_path}/boringssl
     cd ${src_path}/boringssl
     cmake -GNinja -B build
     ninja -C build
