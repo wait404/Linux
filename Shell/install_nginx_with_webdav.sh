@@ -44,12 +44,11 @@ then
     mkdir -p ${nginx_path}
 fi
 
-function Install_boringssl()
+function Install_openssl()
 {
-    git clone https://boringssl.googlesource.com/boringssl ${src_path}/boringssl
-    cd ${src_path}/boringssl
-    cmake -GNinja -B build
-    ninja -C build
+    curl -sSL https://github.com/openssl/openssl/releases/download/openssl-3.2.3/openssl-3.2.3.tar.gz -o ${src_path}/openssl-3.2.3.tar.gz
+    tar -zxf ${src_path}/openssl-3.2.3.tar.gz -C ${src_path}
+    mv ${src_path}/openssl-3.2.3 ${src_path}/openssl
 }
 function Install_headers_more_nginx()
 {
@@ -74,7 +73,7 @@ function Install_nginx()
     curl -sSL http://nginx.org/download/nginx-${nginx_version}.tar.gz -o ${src_path}/nginx-${nginx_version}.tar.gz
     tar -zxf ${src_path}/nginx-${nginx_version}.tar.gz -C ${src_path}
     cd ${src_path}/nginx-${nginx_version}
-    ./configure --user=${nginx_user} --group=${nginx_user} --prefix=${nginx_path}  --with-cc=c++ --with-debug --with-http_dav_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-cc-opt="-I../boringssl/include -x c" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module --add-module=../headers-more-nginx-module --add-module=../nginx-dav-ext-module --add-module=../ngx_brotli --add-module=../ngx-fancyindex
+    ./configure --user=${nginx_user} --group=${nginx_user} --prefix=${nginx_path} --with-http_dav_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-openssl=../openssl  --add-module=../headers-more-nginx-module --add-module=../nginx-dav-ext-module --add-module=../ngx_brotli --add-module=../ngx-fancyindex
     make -j `cat /proc/cpuinfo | grep -c processor` && make install
     if [ $? -eq 0 ]
     then
@@ -112,14 +111,14 @@ EOF
 
 function Clean_files()
 {
-    rm -rf ${src_path}/boringssl ${src_path}/headers-more-nginx-module ${src_path}/ngx-fancyindex ${src_path}/nginx-dav-ext-module ${src_path}/ngx_brotli ${src_path}/ngx-fancyindex ${src_path}/nginx-${nginx_version}*
+    rm -rf ${src_path}/openssl* ${src_path}/headers-more-nginx-module ${src_path}/ngx-fancyindex ${src_path}/nginx-dav-ext-module ${src_path}/ngx_brotli ${src_path}/ngx-fancyindex ${src_path}/nginx-${nginx_version}*
     if [ -f ${nginx_path}/sbin/nginx.old ]
     then
         rm -f ${nginx_path}/sbin/nginx.old
     fi
 }
 
-Install_boringssl
+Install_openssl
 Install_headers_more_nginx
 Install_dav_ext
 Install_brotli
