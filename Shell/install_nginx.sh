@@ -8,7 +8,7 @@ nginx_service=/etc/systemd/system/nginx.service
 if command -v apt-get &> /dev/null
 then
     apt-get update
-    apt-get install -y cmake curl gcc git libbrotli-dev libpcre3 libpcre3-dev libssl-dev libxml2 libxml2-dev libxslt1.1 libxslt1-dev make perl openssl zlib1g zlib1g-dev
+    apt-get install -y cmake curl gcc git libbrotli-dev libpcre2-8-0 libpcre2-dev libssl-dev libxml2 libxml2-dev libxslt1.1 libxslt1-dev make perl openssl zlib1g zlib1g-dev
 elif command -v yum &> /dev/null
 then
     yum install -y brotli-devel cmake curl gcc git libxml2 libxml2-devel libxslt libxslt-devel make pcre pcre-devel perl openssl openssl-devel zlib zlib-devel 
@@ -83,6 +83,7 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=forking
 PIDFile=${nginx_path}/logs/nginx.pid
+ExecStartPost=/usr/bin/sleep 1
 ExecStart=${nginx_path}/sbin/nginx -c ${nginx_path}/conf/nginx.conf
 ExecReload=${nginx_path}/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT \$MAINPID
