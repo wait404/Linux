@@ -46,9 +46,9 @@ fi
 
 function Install_openssl()
 {
-    curl -sSL https://github.com/openssl/openssl/releases/download/openssl-3.2.3/openssl-3.2.3.tar.gz -o ${src_path}/openssl-3.2.3.tar.gz
-    tar -zxf ${src_path}/openssl-3.2.3.tar.gz -C ${src_path}
-    mv ${src_path}/openssl-3.2.3 ${src_path}/openssl
+    curl -sSL https://github.com/openssl/openssl/releases/download/openssl-3.5.4/openssl-3.5.4.tar.gz -o ${src_path}/openssl-3.5.4.tar.gz
+    tar -zxf ${src_path}/openssl-3.5.4.tar.gz -C ${src_path}
+    mv ${src_path}/openssl-3.5.4 ${src_path}/openssl
 }
 function Install_headers_more_nginx()
 {
