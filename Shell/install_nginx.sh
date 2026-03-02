@@ -52,9 +52,9 @@ function Install_brotli()
 }
 function Install_openssl()
 {
-    curl -sSL https://github.com/openssl/openssl/releases/download/openssl-3.5.4/openssl-3.5.4.tar.gz -o ${src_path}/openssl-3.5.4.tar.gz
-    tar -zxf ${src_path}/openssl-3.5.4.tar.gz -C ${src_path}
-    mv ${src_path}/openssl-3.5.4 ${src_path}/openssl
+    curl -sSL https://github.com/openssl/openssl/releases/download/openssl-3.5.5/openssl-3.5.5.tar.gz -o ${src_path}/openssl-3.5.5.tar.gz
+    tar -zxf ${src_path}/openssl-3.5.5.tar.gz -C ${src_path}
+    mv ${src_path}/openssl-3.5.5 ${src_path}/openssl
 }
 function Install_nginx()
 {
